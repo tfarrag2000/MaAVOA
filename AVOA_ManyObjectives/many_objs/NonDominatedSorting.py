@@ -13,7 +13,7 @@
 
 import numpy as np
 
-from Dominates import Dominates
+from AVOA_ManyObjectives.many_objs.Dominates import Dominates
 
 
 def NonDominatedSorting(pop=None):

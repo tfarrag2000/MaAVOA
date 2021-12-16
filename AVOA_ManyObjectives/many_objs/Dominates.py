@@ -13,7 +13,7 @@
 
 import numpy as np
 
-from empty_individual import empty_individual
+from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
 
 
 def Dominates(x=None, y=None):

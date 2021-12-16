@@ -3,12 +3,12 @@ import random
 import numpy as np
 from numpy import linalg as LA
 
-from CalcCrowdingDistance import CalcCrowdingDistance
-from NonDominatedSorting import NonDominatedSorting
-from PlotCosts import PlotCosts
-from SortPopulation import SortPopulation
-from empty_individual import empty_individual
-from many_objs.benchmark import benchmark
+from AVOA_ManyObjectives.many_objs.CalcCrowdingDistance import CalcCrowdingDistance
+from AVOA_ManyObjectives.many_objs.NonDominatedSorting import NonDominatedSorting
+from AVOA_ManyObjectives.many_objs.PlotCosts import PlotCosts
+from AVOA_ManyObjectives.many_objs.SortPopulation import SortPopulation
+from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
+from AVOA_ManyObjectives.many_objs.benchmark import benchmark
 
 nPop = 100
 
@@ -29,7 +29,7 @@ def init_pop():
 
 
 
-    pop = getEvaluatedPopulation(X)
+    pop = EvaluatedPopulation(X)
     pop, F = NonDominatedSorting(pop)
     # Calculate Crowding Distance
     pop = CalcCrowdingDistance(pop, F)
@@ -45,7 +45,8 @@ def init_pop():
 
 
 
-def getEvaluatedPopulation(X):
+def EvaluatedPopulation(X):
+    nPop = X.shape[0]
     # ### calculate objactive function
     objmatrix= benchmark(X)
 
@@ -92,6 +93,14 @@ def getEvaluatedPopulation(X):
         pop[i].Cost = perfermancmetric[i, :]
 
     return pop
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
