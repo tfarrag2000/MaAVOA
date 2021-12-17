@@ -1,17 +1,16 @@
 import math
-from copy import deepcopy
 import random
+from copy import deepcopy
 
 import numpy as np
+from pymoo.factory import get_performance_indicator
 
-from boundaryCheck import boundaryCheck
+from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
+from AVOA_ManyObjectives.many_objs.EvaluatePopulation import evaluatePopulation
+from AVOA_ManyObjectives.many_objs.benchmark import pareto_front
 from exploitation import exploitation
 from exploration import exploration
 from initialization import initialization
-from AVOA_ManyObjectives.many_objs.CalcCrowdingDistance import CalcCrowdingDistance
-from AVOA_ManyObjectives.many_objs.NonDominatedSorting import NonDominatedSorting
-from AVOA_ManyObjectives.many_objs.SortPopulation import SortPopulation
-from AVOA_ManyObjectives.many_objs.main import EvaluatedPopulation
 from random_select import random_select
 
 
@@ -53,16 +52,14 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         #         Best_vulture2_F = current_vulture_F
         #         Best_vulture2_X = current_vulture_X
 
-        pop = EvaluatedPopulation(X)
-        pop, F = NonDominatedSorting(pop)
-        # Calculate Crowding Distance
-        pop = CalcCrowdingDistance(pop, F)
-        # Sort Population
-        pop, F = SortPopulation(pop)
-        Best_vulture1_individual=pop[random.choice(F[0])]
-        Best_vulture2_individual=pop[random.choice(F[1])]
-        Best_vulture1_X = Best_vulture1_individual.Position.reshape((1,variables_no))
-        Best_vulture2_X = Best_vulture2_individual.Position.reshape((1,variables_no))
+        pop, F = evaluatePopulation(X)
+
+        Best_vulture1_id = random.choice(F[0])
+        Best_vulture2_id = random.choice(F[1])
+        Best_vulture1_individual = pop[Best_vulture1_id]
+        Best_vulture2_individual = pop[Best_vulture2_id]
+        Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
+        Best_vulture2_X = Best_vulture2_individual.Position.reshape((1, variables_no))
 
         a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
             (math.pi / 2) * (current_iter / max_iter)) - 1)
@@ -84,6 +81,15 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         current_iter = current_iter + 1
 
         X = boundaryCheck(X, lower_bound, upper_bound)
-        print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (current_iter, Best_vulture1_individual.Cost[0],Best_vulture1_individual.Cost[1]))
+        print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (
+            current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
+
+
+    ############ IGD ############
+    pop, F = evaluatePopulation(X)
+    pf = pareto_front(X_init)
+    igd = get_performance_indicator("igd", pf)
+    X=pop[0].Position.reshape((1, variables_no))
+    print("IGD", igd.do(X))
 
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve

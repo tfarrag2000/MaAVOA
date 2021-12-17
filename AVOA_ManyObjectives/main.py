@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 # clear('all')
 # close_('all')
 # Population size and stoppoing condition
-import ObjectiveFunction
 from AVOA import AVOA
 
 pop_size = 30

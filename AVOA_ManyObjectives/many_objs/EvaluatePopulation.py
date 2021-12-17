@@ -7,16 +7,16 @@ from AVOA_ManyObjectives.many_objs.CalcCrowdingDistance import CalcCrowdingDista
 from AVOA_ManyObjectives.many_objs.NonDominatedSorting import NonDominatedSorting
 from AVOA_ManyObjectives.many_objs.PlotCosts import PlotCosts
 from AVOA_ManyObjectives.many_objs.SortPopulation import SortPopulation
-from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
 from AVOA_ManyObjectives.many_objs.benchmark import benchmark
-
-nPop = 100
+from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
 
 
 def init_pop():
+    nPop = 100
+    nobj = 3
+
     VarMin = np.array([0, 0, 0])
     VarMax = np.array([5, 5, 5])
-    nobj = 3
     nVars = np.asarray(VarMin).size
     Ranges = VarMax - VarMin
     ### intialize random npop individual
@@ -27,14 +27,7 @@ def init_pop():
     # mat = scipy.io.loadmat('Matlab_vr/X.mat')
     # X = mat['X']
 
-
-
-    pop = EvaluatedPopulation(X)
-    pop, F = NonDominatedSorting(pop)
-    # Calculate Crowding Distance
-    pop = CalcCrowdingDistance(pop, F)
-    # Sort Population
-    pop, F = SortPopulation(pop)
+    pop, F = evaluatePopulation(X)
 
     F1 = [pop[i] for i in F[0]]
     PlotCosts(F1)
@@ -44,11 +37,10 @@ def init_pop():
     uide_sol = pop[RS].Position
 
 
-
-def EvaluatedPopulation(X):
+def evaluatePopulation(X):
     nPop = X.shape[0]
     # ### calculate objactive function
-    objmatrix= benchmark(X)
+    objmatrix = benchmark(X)
 
     #### ideal point
     Zideal = np.amin(objmatrix, axis=0)
@@ -92,15 +84,13 @@ def EvaluatedPopulation(X):
         pop[i].Position = X[i, :]
         pop[i].Cost = perfermancmetric[i, :]
 
-    return pop
+    pop, F = NonDominatedSorting(pop)
+    # Calculate Crowding Distance
+    pop = CalcCrowdingDistance(pop, F)
+    # Sort Population
+    pop, F = SortPopulation(pop)
 
-
-
-
-
-
-
-
+    return pop, F
 
 
 if __name__ == '__main__':
