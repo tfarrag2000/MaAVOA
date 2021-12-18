@@ -37,8 +37,7 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
     current_iter = 0
     convergence_curve = []
     while current_iter < max_iter:
-
-        # for i in range(X.shape[0]):
+         # for i in range(X.shape[0]):
         #     # Calculate the fitness of the population
         #     current_vulture_X = X[i, :]
         #     # print("current_vulture_X= ", current_vulture_X)
@@ -52,10 +51,9 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         #         Best_vulture2_F = current_vulture_F
         #         Best_vulture2_X = current_vulture_X
 
-        pop, F = evaluatePopulation(X)
-
-        Best_vulture1_id = random.choice(F[0])
-        Best_vulture2_id = random.choice(F[1])
+        pop, F_Rank = evaluatePopulation(X)
+        Best_vulture1_id = random.choice(F_Rank[0])
+        Best_vulture2_id = random.choice(F_Rank[1])
         Best_vulture1_individual = pop[Best_vulture1_id]
         Best_vulture2_individual = pop[Best_vulture2_id]
         Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
@@ -84,9 +82,10 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
+    pop, F = evaluatePopulation(X)
+    X_list =[ x.Position for x in pop  ]
 
     ############ IGD ############
-    pop, F = evaluatePopulation(X)
     pf = pareto_front(X_init)
     igd = get_performance_indicator("igd", pf)
     X=pop[0].Position.reshape((1, variables_no))
