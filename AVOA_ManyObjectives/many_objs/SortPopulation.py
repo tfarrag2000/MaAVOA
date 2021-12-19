@@ -14,7 +14,7 @@
 import numpy as np
 
 
-def SortPopulation(pop=None):
+def SortPopulation(pop, n):
     # CrownDis=[]
     Ranks = []
     for p in pop:
@@ -33,11 +33,17 @@ def SortPopulation(pop=None):
     MaxRank = np.amax(Ranks)
     F = []
     new_pop = []
+    k = 0
     for i in range(0, MaxRank + 1):
+        if k == n:
+            break
         F.append([])
         for p in pop:
             if p.Rank == i:
                 new_pop.append(p)
                 F[i].append(len(new_pop) - 1)
+                k = k + 1
+                if k == n:
+                    break
 
     return new_pop, F

@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def initialization(N=None, dim=None, ub=None, lb=None):
+def initialization(N, dim, ub, lb):
     if type(ub) is list:
         Boundary_no = len(ub)
     else:

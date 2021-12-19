@@ -36,8 +36,10 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
     ##Main loop
     current_iter = 0
     convergence_curve = []
+    X_new = []
+
     while current_iter < max_iter:
-         # for i in range(X.shape[0]):
+        # for i in range(X.shape[0]):
         #     # Calculate the fitness of the population
         #     current_vulture_X = X[i, :]
         #     # print("current_vulture_X= ", current_vulture_X)
@@ -50,10 +52,21 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         #     if (current_vulture_F > Best_vulture1_F) and (current_vulture_F < Best_vulture2_F):
         #         Best_vulture2_F = current_vulture_F
         #         Best_vulture2_X = current_vulture_X
+        X_old = deepcopy(X)
+        if len(X_new) == 0:
+            X_intermediate = X_old
+        else:
+            X_intermediate = np.concatenate([X_old, X_new])
+            pass
 
-        pop, F_Rank = evaluatePopulation(X)
+        pop, F_Rank = evaluatePopulation(X_intermediate, pop_size)
         Best_vulture1_id = random.choice(F_Rank[0])
-        Best_vulture2_id = random.choice(F_Rank[1])
+
+        if len(F_Rank) == 1:
+            Best_vulture2_id = random.choice(F_Rank[0])
+        else:
+            Best_vulture2_id = random.choice(F_Rank[1])
+
         Best_vulture1_individual = pop[Best_vulture1_id]
         Best_vulture2_individual = pop[Best_vulture2_id]
         Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
@@ -66,7 +79,7 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         for i in range(X.shape[0]):
             current_vulture_X = X[i, :]
             F = P1 * (2 * np.random.rand() - 1)
-            random_vulture_X = random_select(Best_vulture1_X, Best_vulture2_X, alpha, betha)
+            random_vulture_X = random_select(current_vulture_X, Best_vulture1_X, Best_vulture2_X)
             if np.abs(F) >= 1:
                 current_vulture_X = exploration(current_vulture_X, random_vulture_X, F, p1, upper_bound, lower_bound)
             else:
@@ -78,17 +91,17 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
         convergence_curve.append(Best_vulture1_individual.Cost[1])
         current_iter = current_iter + 1
 
-        X = boundaryCheck(X, lower_bound, upper_bound)
+        X_new = boundaryCheck(X, lower_bound, upper_bound)
         print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
-    pop, F = evaluatePopulation(X)
-    X_list =[ x.Position for x in pop  ]
+    pop, F_Rank = evaluatePopulation(X, pop_size)
+    X_list = [x.Position for x in pop]
 
     ############ IGD ############
     pf = pareto_front(X_init)
     igd = get_performance_indicator("igd", pf)
-    X=pop[0].Position.reshape((1, variables_no))
+    X = pop[0].Position.reshape((1, variables_no))
     print("IGD", igd.do(X))
 
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve

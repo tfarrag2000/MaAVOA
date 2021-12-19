@@ -1,4 +1,3 @@
-#
 # Copyright (c) 2015, Yarpiz (www.yarpiz.com)
 # All rights reserved. Please read the "license.txt" for license terms.
 #

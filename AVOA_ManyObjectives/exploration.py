@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def exploration(current_vulture_X=None, random_vulture_X=None, F=None, p1=None, upper_bound=None, lower_bound=None):
+def exploration(current_vulture_X, random_vulture_X, F, p1, upper_bound, lower_bound):
     if np.random.rand() < p1:
         current_vulture_X = random_vulture_X - (
             np.abs((2 * np.random.rand()) * random_vulture_X - current_vulture_X)) * F

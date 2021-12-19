@@ -1,9 +1,9 @@
-import numpy as np
-
-
-def boundaryCheck(X=None, lb=None, ub=None):
+def boundaryCheck(X, lb, ub):
     for i in range(X.shape[0]):
-        FU = X[i, :] > ub
-        FL = X[i, :] < lb
-        X[i, :] = (np.multiply(X[i, :], np.invert(FU + FL))) + np.multiply(ub, FU) + np.multiply(lb, FL)
+        for j in range(X.shape[1]):
+            if X[i, j] > ub:
+                X[i, j] = ub
+            elif X[i, j] < lb:
+                X[i, j] = lb
+
     return X

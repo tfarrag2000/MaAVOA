@@ -20,15 +20,15 @@ import matplotlib.pyplot as plt
 # Population size and stoppoing condition
 from AVOA import AVOA
 
-pop_size = 30
-max_iter = 100
+pop_size = 100
+max_iter = 1000
 # Define your objective function's details here
 # fobj = ObjectiveFunction.ObjectiveFunction
 # print(fobj)
 
 variables_no = 10
-lower_bound = - 100
-upper_bound = 100
+lower_bound = 0
+upper_bound = 1
 
 Best_vulture1_F, Best_vulture1_X, convergence_curve = AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no)
 
