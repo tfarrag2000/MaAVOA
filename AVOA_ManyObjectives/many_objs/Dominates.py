@@ -16,7 +16,7 @@ import numpy as np
 from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
 
 
-def Dominates(x=None, y=None):
+def Dominates(x , y ):
     if isinstance(x, empty_individual):
         x = x.Cost
     if isinstance(y, empty_individual):

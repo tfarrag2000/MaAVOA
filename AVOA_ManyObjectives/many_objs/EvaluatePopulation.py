@@ -83,7 +83,7 @@ def evaluatePopulation(X, n):
         pop[i].Position = X[i, :]
         pop[i].Cost = perfermancmetric[i, :]
 
-    pop, F = NonDominatedSorting(pop)
+    pop, F = NonDominatedSorting(pop, n)
     # Calculate Crowding Distance
     # pop = CalcCrowdingDistance(pop, F)
     # Sort Population
