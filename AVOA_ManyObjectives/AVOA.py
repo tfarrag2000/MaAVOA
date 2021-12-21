@@ -1,6 +1,7 @@
 import math
 import random
 from copy import deepcopy
+import matplotlib.pyplot as plt
 
 import numpy as np
 from pymoo.factory import get_performance_indicator
@@ -96,12 +97,24 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
     pop, F_Rank = evaluatePopulation(X, pop_size)
-    X_list = [x.Position for x in pop]
+    X_list = [pop[x].Position for x in F_Rank[0] if not np.isnan(pop[x].Position).any()]
 
     ############ IGD ############
-    pf = pareto_front(X_init)
+    pf = loadPF()
+    plt.plot(pf)
+    plt.show()
     igd = get_performance_indicator("igd", pf)
-    X = pop[0].Position.reshape((1, variables_no))
-    print("IGD", igd.do(X))
+    print("IGD", igd.do(X_list))
 
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve
+
+
+def loadPF():
+    mainlist = []
+    infile = open('PF_4.txt', 'r')
+    for line in infile:
+        list1=line.strip().split(' ')
+        list2=[float(i) for i in list1]
+        mainlist.append(list2)
+    infile.close()
+    return mainlist
