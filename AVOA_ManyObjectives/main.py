@@ -26,7 +26,7 @@ max_iter = 10
 # fobj = ObjectiveFunction.ObjectiveFunction
 # print(fobj)
 
-variables_no = 2
+variables_no = 4
 lower_bound = 0
 upper_bound = 1
 

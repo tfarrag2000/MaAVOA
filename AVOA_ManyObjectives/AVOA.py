@@ -97,6 +97,7 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
     pop, F_Rank = evaluatePopulation(X, pop_size)
+    # remove any solution has nan values
     X_list = [pop[x].Position for x in F_Rank[0] if not np.isnan(pop[x].Position).any()]
 
     ############ IGD ############
