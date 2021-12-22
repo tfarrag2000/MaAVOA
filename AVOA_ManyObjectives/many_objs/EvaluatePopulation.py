@@ -1,7 +1,6 @@
 import random
 
 import numpy as np
-from numpy import linalg as LA
 
 from AVOA_ManyObjectives.many_objs.NonDominatedSorting import NonDominatedSorting
 from AVOA_ManyObjectives.many_objs.PlotCosts import PlotCosts
@@ -36,10 +35,10 @@ def init_pop():
     uide_sol = pop[RS].Position
 
 
-def evaluatePopulation(X, n,variables_no,Objective_no):
+def evaluatePopulation(X, n, variables_no, Objective_no):
     nPop = X.shape[0]
     # ### calculate objactive function
-    objmatrix = benchmark(X,variables_no,Objective_no)
+    objmatrix = benchmark(X, variables_no, Objective_no)
 
     # #### ideal point
     # Zideal = np.amin(objmatrix, axis=0)
@@ -76,10 +75,8 @@ def evaluatePopulation(X, n,variables_no,Objective_no):
         individual = empty_individual()
         individual.Position = X[i, :]
         # individual.Cost = perfermancmetric[i, :]
-        individual.Cost=objmatrix[i,:]
+        individual.Cost = objmatrix[i, :]
         pop.append(individual)
-
-
 
     pop, F = NonDominatedSorting(pop, n)
     # Calculate Crowding Distance

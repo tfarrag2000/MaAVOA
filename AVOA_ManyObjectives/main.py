@@ -28,12 +28,13 @@ max_iter = 500
 # https://github.com/MOEAFramework/MOEAFramework/tree/master/pf
 
 Objective_no = 3
-variables_no = Objective_no + 5 -1
+variables_no = Objective_no + 5 - 1
 
-lower_bound  = 0
-upper_bound  = 1
+lower_bound = 0
+upper_bound = 1
 
-Best_vulture1_F, Best_vulture1_X, convergence_curve = AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no,Objective_no)
+Best_vulture1_F, Best_vulture1_X, convergence_curve = AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no,
+                                                           Objective_no)
 
 # Best optimal values for the decision variables
 plt.figure
