@@ -8,14 +8,14 @@ from pymoo.factory import get_performance_indicator
 
 from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
 from AVOA_ManyObjectives.many_objs.EvaluatePopulation import evaluatePopulation
-from AVOA_ManyObjectives.many_objs.benchmark import pareto_front
 from exploitation import exploitation
 from exploration import exploration
 from initialization import initialization
 from random_select import random_select
+from pymoo.visualization.scatter import Scatter
 
 
-def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, variables_no=None):
+def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
     # initialize Best_vulture1, Best_vulture2
     # Best_vulture1_X = np.zeros((1, variables_no))
     # print("Best_vulture1_X = ",Best_vulture1_X)
@@ -98,21 +98,22 @@ def AVOA(pop_size=None, max_iter=None, lower_bound=None, upper_bound=None, varia
 
     pop, F_Rank = evaluatePopulation(X, pop_size)
     # remove any solution has nan values
-    X_list = [pop[x].Position for x in F_Rank[0] if not np.isnan(pop[x].Position).any()]
+    X_list = np.array([pop[x].Position for x in F_Rank[0] if not np.isnan(pop[x].Position).any()])
 
     ############ IGD ############
-    pf = loadPF()
-    plt.plot(pf)
-    plt.show()
+    pf = np.array(loadPF(variables_no))
     igd = get_performance_indicator("igd", pf)
     print("IGD", igd.do(X_list))
+
+    Scatter(legend=True).add(pf, label="Pareto-front").add(X_list, label="Result").show()
+
 
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve
 
 
-def loadPF():
+def loadPF(variables_no):
     mainlist = []
-    infile = open('PF_4.txt', 'r')
+    infile = open('PF_{}.txt'.format(variables_no), 'r')
     for line in infile:
         list1=line.strip().split(' ')
         list2=[float(i) for i in list1]

@@ -1,5 +1,6 @@
 import pymoo.problems.many.dtlz as dtlz
 from pymoo.factory import get_problem
+import numpy as np
 
 
 def benchmark(X):
@@ -11,7 +12,3 @@ def benchmark(X):
     return objmatrix
 
 
-def pareto_front(X):
-    pf = get_problem("dtlz1").pareto_front(X)
-    return pf
-    # get_visualization("scatter", angle=(45, 45)).add(pf).show()

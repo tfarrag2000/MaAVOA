@@ -20,8 +20,8 @@ import matplotlib.pyplot as plt
 # Population size and stoppoing condition
 from AVOA import AVOA
 
-pop_size = 200
-max_iter = 10
+pop_size = 100
+max_iter = 100
 # Define your objective function's details here
 # fobj = ObjectiveFunction.ObjectiveFunction
 # print(fobj)
