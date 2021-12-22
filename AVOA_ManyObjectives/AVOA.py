@@ -60,26 +60,24 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
 
         pop, F_Rank = evaluatePopulation(X_intermediate, pop_size)
         Best_vulture1_id = random.choice(F_Rank[0])
-
         if len(F_Rank) == 1:
             Best_vulture2_id = random.choice(F_Rank[0])
         else:
             Best_vulture2_id = random.choice(F_Rank[1])
-
         Best_vulture1_individual = pop[Best_vulture1_id]
         Best_vulture2_individual = pop[Best_vulture2_id]
         Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
         Best_vulture2_X = Best_vulture2_individual.Position.reshape((1, variables_no))
 
-        X = np.array([p.Position for p in pop ])
-        X_old = deepcopy(X)
+        X_new = np.array([p.Position for p in pop ])
+        X_old = deepcopy(X_new)
 
         a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
             (math.pi / 2) * (current_iter / max_iter)) - 1)
         P1 = (2 * np.random.rand() + 1) * (1 - (current_iter / max_iter)) + a
         # Update the location
         for i in range(X.shape[0]):
-            current_vulture_X = X[i, :]
+            current_vulture_X = X_new[i, :]
             F = P1 * (2 * np.random.rand() - 1)
             random_vulture_X = random_select(current_vulture_X, Best_vulture1_X, Best_vulture2_X)
             if np.abs(F) >= 1:
@@ -89,11 +87,11 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
                     current_vulture_X = exploitation(current_vulture_X, Best_vulture1_X, Best_vulture2_X,
                                                      random_vulture_X, F, p2, p3, variables_no, upper_bound,
                                                      lower_bound)
-            X[i, :] = current_vulture_X
+            X_new[i, :] = current_vulture_X
         convergence_curve.append(Best_vulture1_individual.Cost[1])
         current_iter = current_iter + 1
 
-        X_new = boundaryCheck(X, lower_bound, upper_bound)
+        X_new = boundaryCheck(X_new, lower_bound, upper_bound)
         print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
