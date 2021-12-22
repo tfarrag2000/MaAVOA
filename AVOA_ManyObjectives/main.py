@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from AVOA import AVOA
 
 pop_size = 100
-max_iter = 100
+max_iter = 5
 # Define your objective function's details here
 # fobj = ObjectiveFunction.ObjectiveFunction
 # print(fobj)

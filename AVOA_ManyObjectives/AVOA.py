@@ -1,10 +1,10 @@
 import math
 import random
 from copy import deepcopy
-import matplotlib.pyplot as plt
 
 import numpy as np
 from pymoo.factory import get_performance_indicator
+from pymoo.visualization.scatter import Scatter
 
 from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
 from AVOA_ManyObjectives.many_objs.EvaluatePopulation import evaluatePopulation
@@ -12,7 +12,6 @@ from exploitation import exploitation
 from exploration import exploration
 from initialization import initialization
 from random_select import random_select
-from pymoo.visualization.scatter import Scatter
 
 
 def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
@@ -38,6 +37,7 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
     current_iter = 0
     convergence_curve = []
     X_new = []
+    X_old=X
 
     while current_iter < max_iter:
         # for i in range(X.shape[0]):
@@ -53,12 +53,10 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
         #     if (current_vulture_F > Best_vulture1_F) and (current_vulture_F < Best_vulture2_F):
         #         Best_vulture2_F = current_vulture_F
         #         Best_vulture2_X = current_vulture_X
-        X_old = deepcopy(X)
         if len(X_new) == 0:
             X_intermediate = X_old
         else:
             X_intermediate = np.concatenate([X_old, X_new])
-            pass
 
         pop, F_Rank = evaluatePopulation(X_intermediate, pop_size)
         Best_vulture1_id = random.choice(F_Rank[0])
@@ -72,6 +70,9 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
         Best_vulture2_individual = pop[Best_vulture2_id]
         Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
         Best_vulture2_X = Best_vulture2_individual.Position.reshape((1, variables_no))
+
+        X = np.array([p.Position for p in pop ])
+        X_old = deepcopy(X)
 
         a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
             (math.pi / 2) * (current_iter / max_iter)) - 1)
@@ -107,7 +108,6 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
 
     Scatter(legend=True).add(pf, label="Pareto-front").add(X_list, label="Result").show()
 
-
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve
 
 
@@ -115,8 +115,8 @@ def loadPF(variables_no):
     mainlist = []
     infile = open('PF_{}.txt'.format(variables_no), 'r')
     for line in infile:
-        list1=line.strip().split(' ')
-        list2=[float(i) for i in list1]
+        list1 = line.strip().split(' ')
+        list2 = [float(i) for i in list1]
         mainlist.append(list2)
     infile.close()
     return mainlist

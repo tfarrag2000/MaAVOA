@@ -16,7 +16,7 @@ import numpy as np
 from AVOA_ManyObjectives.many_objs.Dominates import Dominates
 
 
-def NonDominatedSorting(pop,n):
+def NonDominatedSorting(pop, n):
     nPop = np.asarray(pop).size
     for i in range(nPop):
         pop[i].DominationSet.clear()

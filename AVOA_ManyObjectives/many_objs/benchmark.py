@@ -1,6 +1,4 @@
 import pymoo.problems.many.dtlz as dtlz
-from pymoo.factory import get_problem
-import numpy as np
 
 
 def benchmark(X):
@@ -8,7 +6,4 @@ def benchmark(X):
     g1 = dtlz_problem.g1(X)
     g2 = dtlz_problem.g2(X)
     objmatrix = dtlz_problem.obj_func(X, g1)
-
     return objmatrix
-
-

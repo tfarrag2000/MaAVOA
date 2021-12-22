@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def PlotCosts(F1 ):
+def PlotCosts(F1):
     y1 = np.zeros((np.asarray(F1).size, 1))
     y2 = np.zeros((np.asarray(F1).size, 1))
 

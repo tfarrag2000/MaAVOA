@@ -14,7 +14,7 @@ import math
 import numpy as np
 
 
-def CalcCrowdingDistance(pop , F ):
+def CalcCrowdingDistance(pop, F):
     nF = np.asarray(F, dtype=object).size
     for k in range(nF):
         Costs = []
