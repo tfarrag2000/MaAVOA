@@ -76,7 +76,7 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
             (math.pi / 2) * (current_iter / max_iter)) - 1)
         P1 = (2 * np.random.rand() + 1) * (1 - (current_iter / max_iter)) + a
         # Update the location
-        for i in range(X.shape[0]):
+        for i in range(X_new.shape[0]):
             current_vulture_X = X_new[i, :]
             F = P1 * (2 * np.random.rand() - 1)
             random_vulture_X = random_select(current_vulture_X, Best_vulture1_X, Best_vulture2_X)
@@ -95,6 +95,8 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
         print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
+
+    X=X_new
     pop, F_Rank = evaluatePopulation(X, pop_size)
     # remove any solution has nan values
     X_list = np.array([pop[x].Position for x in F_Rank[0] if not np.isnan(pop[x].Position).any()])
