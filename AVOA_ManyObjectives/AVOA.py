@@ -4,8 +4,8 @@ from copy import deepcopy
 
 import numpy as np
 from pymoo.factory import get_performance_indicator
-from pymoo.visualization.scatter import Scatter
 
+from AVOA_ManyObjectives.IGD import calculateigd
 from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
 from AVOA_ManyObjectives.many_objs.EvaluatePopulation import evaluatePopulation
 from exploitation import exploitation
@@ -14,7 +14,7 @@ from initialization import initialization
 from random_select import random_select
 
 
-def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
+def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_no):
     # initialize Best_vulture1, Best_vulture2
     # Best_vulture1_X = np.zeros((1, variables_no))
     # print("Best_vulture1_X = ",Best_vulture1_X)
@@ -37,28 +37,27 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
     current_iter = 0
     convergence_curve = []
     X_new = []
-    X_old=X
+
+    ############ IGD ############
+    pf = np.array(loadPF(Objective_no))
+    igd = get_performance_indicator("igd", pf)
+
+    X_intermediate = X
+
+    D_Position = []
+    D_Cost = []
 
     while current_iter < max_iter:
-        # for i in range(X.shape[0]):
-        #     # Calculate the fitness of the population
-        #     current_vulture_X = X[i, :]
-        #     # print("current_vulture_X= ", current_vulture_X)
-        #     current_vulture_F = fobj(current_vulture_X)
-        #     # print("current_vulture_F= ", current_vulture_F)
-        #     # Update the first best two vultures if needed
-        #     if current_vulture_F < Best_vulture1_F:
-        #         Best_vulture1_F = current_vulture_F
-        #         Best_vulture1_X = current_vulture_X
-        #     if (current_vulture_F > Best_vulture1_F) and (current_vulture_F < Best_vulture2_F):
-        #         Best_vulture2_F = current_vulture_F
-        #         Best_vulture2_X = current_vulture_X
-        if len(X_new) == 0:
-            X_intermediate = X_old
-        else:
-            X_intermediate = np.concatenate([X_old, X_new])
 
-        pop, F_Rank = evaluatePopulation(X_intermediate, pop_size)
+        pop, F_Rank = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
+        X_list = np.array([pop[x].Position for x in F_Rank[0]])
+        X_Pareto_Front = np.array([pop[x].Cost for x in F_Rank[0]])
+        # print("IGD", igd.do(X_Pareto_Front))
+        print("IGD2", calculateigd(pf, X_Pareto_Front))
+        # print("IGD3", IGD(pf, X_Pareto_Front))
+        D_Position.append(X_list)
+        D_Cost.append(X_Pareto_Front)
+
         Best_vulture1_id = random.choice(F_Rank[0])
         if len(F_Rank) == 1:
             Best_vulture2_id = random.choice(F_Rank[0])
@@ -69,9 +68,10 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
         Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
         Best_vulture2_X = Best_vulture2_individual.Position.reshape((1, variables_no))
 
-        X_new = np.array([p.Position for p in pop ])
+        X_new = np.array([p.Position for p in pop])
         X_old = deepcopy(X_new)
 
+        # Africian
         a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
             (math.pi / 2) * (current_iter / max_iter)) - 1)
         P1 = (2 * np.random.rand() + 1) * (1 - (current_iter / max_iter)) + a
@@ -92,28 +92,29 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no):
         current_iter = current_iter + 1
 
         X_new = boundaryCheck(X_new, lower_bound, upper_bound)
-        print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f \n ' % (
+
+        X_intermediate = np.concatenate([X_old, X_new])
+
+        print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f' % (
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
+    pop, F_Rank = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
+    X_list = np.array([pop[x].Position for x in F_Rank[0]])
+    X_Pareto_Front = np.array([pop[x].Cost for x in F_Rank[0]])
+    # print("IGD", igd.do(X_Pareto_Front))
+    print("IGD2", calculateigd(pf, X_Pareto_Front))
+    # print("IGD3", IGD(pf, X_Pareto_Front))
+    D_Position.append(X_list)
+    D_Cost.append(X_Pareto_Front)
 
-    X=X_new
-    pop, F_Rank = evaluatePopulation(X, pop_size)
-    # remove any solution has nan values
-    X_list = np.array([pop[x].Position for x in F_Rank[0] if not np.isnan(pop[x].Position).any()])
-
-    ############ IGD ############
-    pf = np.array(loadPF(variables_no))
-    igd = get_performance_indicator("igd", pf)
-    print("IGD", igd.do(X_list))
-
-    Scatter(legend=True).add(pf, label="Pareto-front").add(X_list, label="Result").show()
+    # Scatter(legend=True).add(pf, label="Pareto-front").add(X_Pareto_Front, label="Result").show()
 
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve
 
 
-def loadPF(variables_no):
+def loadPF(Objective_no):
     mainlist = []
-    infile = open('PF_{}.txt'.format(variables_no), 'r')
+    infile = open('PF_{}.txt'.format(Objective_no), 'r')
     for line in infile:
         list1 = line.strip().split(' ')
         list2 = [float(i) for i in list1]

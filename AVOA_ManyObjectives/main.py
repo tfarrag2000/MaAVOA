@@ -21,16 +21,19 @@ import matplotlib.pyplot as plt
 from AVOA import AVOA
 
 pop_size = 100
-max_iter = 5
+max_iter = 500
 # Define your objective function's details here
 # fobj = ObjectiveFunction.ObjectiveFunction
 # print(fobj)
+# https://github.com/MOEAFramework/MOEAFramework/tree/master/pf
 
-variables_no = 4
-lower_bound = 0
-upper_bound = 1
+Objective_no = 3
+variables_no = Objective_no + 5 -1
 
-Best_vulture1_F, Best_vulture1_X, convergence_curve = AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no)
+lower_bound  = 0
+upper_bound  = 1
+
+Best_vulture1_F, Best_vulture1_X, convergence_curve = AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no,Objective_no)
 
 # Best optimal values for the decision variables
 plt.figure
