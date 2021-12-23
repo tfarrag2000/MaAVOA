@@ -13,18 +13,11 @@
 # }
 
 import matplotlib.pyplot as plt
-
-# import matplotlib.ticker as ticker
-# clear('all')
-# close_('all')
-# Population size and stoppoing condition
 from AVOA import AVOA
 
 pop_size = 100
-max_iter = 10
-# Define your objective function's details here
-# fobj = ObjectiveFunction.ObjectiveFunction
-# print(fobj)
+max_iter = 100
+
 # https://github.com/MOEAFramework/MOEAFramework/tree/master/pf
 
 Objective_no = 3

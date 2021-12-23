@@ -38,7 +38,7 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
     X_new = []
 
     ############ IGD ############
-    truepf = np.array(loadPF(Objective_no))
+    truepf = np.array(load_truePF(Objective_no))
 
     X_intermediate = X
 
@@ -117,7 +117,7 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
     return Best_vulture1_individual.Cost, Best_vulture1_X, convergence_curve
 
 
-def loadPF(Objective_no):
+def load_truePF(Objective_no):
     mainlist = []
     infile = open('PF_{}.txt'.format(Objective_no), 'r')
     for line in infile:
