@@ -39,8 +39,7 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
     X_new = []
 
     ############ IGD ############
-    pf = np.array(loadPF(Objective_no))
-    igd = get_performance_indicator("igd", pf)
+    truepf = np.array(loadPF(Objective_no))
 
     X_intermediate = X
 
@@ -51,12 +50,10 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
 
         pop, F_Rank = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
         X_list = np.array([pop[x].Position for x in F_Rank[0]])
-        X_Pareto_Front = np.array([pop[x].Cost for x in F_Rank[0]])
-        # print("IGD", igd.do(X_Pareto_Front))
-        print("IGD2", calculateigd(pf, X_Pareto_Front))
-        # print("IGD3", IGD(pf, X_Pareto_Front))
+        pf = np.array([pop[x].Costobj for x in F_Rank[0]])
+        print("IGD2", calculateigd(truepf, pf))
         D_Position.append(X_list)
-        D_Cost.append(X_Pareto_Front)
+        D_Cost.append(pf)
 
         Best_vulture1_id = random.choice(F_Rank[0])
         if len(F_Rank) == 1:
@@ -100,12 +97,10 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
 
     pop, F_Rank = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
     X_list = np.array([pop[x].Position for x in F_Rank[0]])
-    X_Pareto_Front = np.array([pop[x].Cost for x in F_Rank[0]])
-    # print("IGD", igd.do(X_Pareto_Front))
-    print("IGD2", calculateigd(pf, X_Pareto_Front))
-    # print("IGD3", IGD(pf, X_Pareto_Front))
+    pf = np.array([pop[x].Costobj for x in F_Rank[0]])
+    print("IGD2", calculateigd(truepf, pf))
     D_Position.append(X_list)
-    D_Cost.append(X_Pareto_Front)
+    D_Cost.append(pf)
 
     # Scatter(legend=True).add(pf, label="Pareto-front").add(X_Pareto_Front, label="Result").show()
 

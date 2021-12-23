@@ -16,11 +16,18 @@ import numpy as np
 from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
 
 
-def Dominates(x, y):
-    if isinstance(x, empty_individual):
+def Dominates(x, y,AccordingTo):
+    # if isinstance(x, empty_individual):
+    #     x = x.Cost
+    # if isinstance(y, empty_individual):
+    #     y = y.Cost
+
+    if AccordingTo==0:
         x = x.Cost
-    if isinstance(y, empty_individual):
         y = y.Cost
+    elif  AccordingTo==1:
+        x = x.Costobj
+        y = y.Costobj
 
     b1 = np.all(x <= y)
     b2 = np.any(x < y)
