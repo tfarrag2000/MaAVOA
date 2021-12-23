@@ -3,7 +3,6 @@ import random
 from copy import deepcopy
 
 import numpy as np
-from pymoo.factory import get_performance_indicator
 
 from AVOA_ManyObjectives.IGD import calculateigd
 from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
@@ -48,27 +47,30 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
 
     while current_iter < max_iter:
 
-        pop, F_Rank = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
-        X_list = np.array([pop[x].Position for x in F_Rank[0]])
-        pf = np.array([pop[x].Costobj for x in F_Rank[0]])
+        ############### Order to select best from (parents and childs)
+        pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
+        X_list = np.array([pop_obj[x].Position for x in F_obj[0]])
+        pf = np.array([pop_obj[x].Costobj for x in F_obj[0]])
         print("IGD2", calculateigd(truepf, pf))
         D_Position.append(X_list)
         D_Cost.append(pf)
 
-        Best_vulture1_id = random.choice(F_Rank[0])
-        if len(F_Rank) == 1:
-            Best_vulture2_id = random.choice(F_Rank[0])
+        ################### save parents in X_old
+        X_new = np.array([p.Position for p in pop_CD])
+        X_old = deepcopy(X_new)
+
+        ################### select vulture ###################
+        Best_vulture1_id = random.choice(F_CD[0])
+        if len(F_CD) == 1:
+            Best_vulture2_id = random.choice(F_CD[0])
         else:
-            Best_vulture2_id = random.choice(F_Rank[1])
-        Best_vulture1_individual = pop[Best_vulture1_id]
-        Best_vulture2_individual = pop[Best_vulture2_id]
+            Best_vulture2_id = random.choice(F_CD[1])
+        Best_vulture1_individual = pop_CD[Best_vulture1_id]
+        Best_vulture2_individual = pop_CD[Best_vulture2_id]
         Best_vulture1_X = Best_vulture1_individual.Position.reshape((1, variables_no))
         Best_vulture2_X = Best_vulture2_individual.Position.reshape((1, variables_no))
 
-        X_new = np.array([p.Position for p in pop])
-        X_old = deepcopy(X_new)
-
-        # Africian
+        ################### Africian exploration & exploitation ###################
         a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
             (math.pi / 2) * (current_iter / max_iter)) - 1)
         P1 = (2 * np.random.rand() + 1) * (1 - (current_iter / max_iter)) + a
@@ -87,20 +89,28 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
             X_new[i, :] = current_vulture_X
         convergence_curve.append(Best_vulture1_individual.Cost[1])
         current_iter = current_iter + 1
-
         X_new = boundaryCheck(X_new, lower_bound, upper_bound)
-
+        ##########################################################################
         X_intermediate = np.concatenate([X_old, X_new])
-
-        print('In Iteration %d, best estimation of Conversion and Diversion is %4.2f , %4.2f' % (
+        print('In Iteration %d, best estimation of Conv. and Div. is %4.2f , %4.2f' % (
             current_iter, Best_vulture1_individual.Cost[0], Best_vulture1_individual.Cost[1]))
 
-    pop, F_Rank = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
-    X_list = np.array([pop[x].Position for x in F_Rank[0]])
-    pf = np.array([pop[x].Costobj for x in F_Rank[0]])
+    #################### Order final List
+    pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
+    X_list = np.array([pop_obj[x].Position for x in F_obj[0]])
+    pf = np.array([pop_obj[x].Costobj for x in F_obj[0]])
     print("IGD2", calculateigd(truepf, pf))
     D_Position.append(X_list)
     D_Cost.append(pf)
+
+    ################### Final PF
+    final_list = []
+    for list in D_Position:
+        for l in list:
+            final_list.append(l)
+    pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(np.array(final_list), pop_size, variables_no, Objective_no)
+    pf_final = np.array([pop_obj[x].Costobj for x in F_obj[0]])
+    print("IGD_final", calculateigd(truepf, pf_final))
 
     # Scatter(legend=True).add(pf, label="Pareto-front").add(X_Pareto_Front, label="Result").show()
 

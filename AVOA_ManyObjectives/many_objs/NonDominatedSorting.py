@@ -16,7 +16,7 @@ import numpy as np
 from AVOA_ManyObjectives.many_objs.Dominates import Dominates
 
 
-def NonDominatedSorting(pop,AccordingTo=0):   #  AccordingTo=0 by Conv and Diver ,  AccordingTo=1 by objective matrix
+def NonDominatedSorting(pop, n, AccordingTo):  # AccordingTo=0 by Conv and Diver ,  AccordingTo=1 by objective matrix
     nPop = np.asarray(pop).size
     for i in range(nPop):
         pop[i].DominationSet.clear()
@@ -29,10 +29,10 @@ def NonDominatedSorting(pop,AccordingTo=0):   #  AccordingTo=0 by Conv and Diver
             p = pop[i]
             q = pop[j]
 
-            if Dominates(p, q,AccordingTo):
+            if Dominates(p, q, AccordingTo):
                 p.DominationSet.append(j)
                 q.DominatedCount = q.DominatedCount + 1
-            if Dominates(q, p,AccordingTo):
+            if Dominates(q, p, AccordingTo):
                 q.DominationSet.append(i)
                 p.DominatedCount = p.DominatedCount + 1
 
@@ -58,5 +58,4 @@ def NonDominatedSorting(pop,AccordingTo=0):   #  AccordingTo=0 by Conv and Diver
             break
         F.append(Q)
         k = k + 1
-
     return pop, F

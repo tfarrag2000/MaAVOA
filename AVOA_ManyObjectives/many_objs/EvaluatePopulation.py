@@ -1,9 +1,7 @@
-import random
-
 import numpy as np
 from numpy import linalg as LA
+
 from AVOA_ManyObjectives.many_objs.NonDominatedSorting import NonDominatedSorting
-from AVOA_ManyObjectives.many_objs.PlotCosts import PlotCosts
 from AVOA_ManyObjectives.many_objs.SortPopulation import SortPopulation
 from AVOA_ManyObjectives.many_objs.benchmark import benchmark
 from AVOA_ManyObjectives.many_objs.empty_individual import empty_individual
@@ -84,12 +82,10 @@ def evaluatePopulation(X, n, variables_no, Objective_no):
     # Sort Population
     pop_CD, F_CD = SortPopulation(pop_CD, n)
 
-
     pop_obj, F_obj = NonDominatedSorting(pop, n, AccordingTo=1)
     pop_obj, F_obj = SortPopulation(pop_obj, n)
 
-
-    return pop_CD, F_CD , pop_obj, F_obj
+    return pop_CD, F_CD, pop_obj, F_obj
 
 
 if __name__ == '__main__':
