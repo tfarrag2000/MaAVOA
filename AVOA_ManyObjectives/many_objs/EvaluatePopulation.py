@@ -1,6 +1,7 @@
+from copy import deepcopy
+
 import numpy as np
 from numpy import linalg as LA
-
 from AVOA_ManyObjectives.many_objs.NonDominatedSorting import NonDominatedSorting
 from AVOA_ManyObjectives.many_objs.SortPopulation import SortPopulation
 from AVOA_ManyObjectives.many_objs.benchmark import benchmark
@@ -76,17 +77,19 @@ def evaluatePopulation(X, n, variables_no, Objective_no):
         individual.Costobj = objmatrix[i, :]
         pop.append(individual)
 
-    pop_CD, F_CD = NonDominatedSorting(pop, n, AccordingTo=0)
+
+    pop_CD, F_CD = NonDominatedSorting(deepcopy(pop), n, AccordingTo=0)
     # Calculate Crowding Distance
     # pop = CalcCrowdingDistance(pop, F)
     # Sort Population
     pop_CD, F_CD = SortPopulation(pop_CD, n)
 
-    pop_obj, F_obj = NonDominatedSorting(pop, n, AccordingTo=1)
+    pop_obj, F_obj = NonDominatedSorting(deepcopy(pop), n, AccordingTo=1)
     pop_obj, F_obj = SortPopulation(pop_obj, n)
+    return pop_CD, F_CD,pop_obj, F_obj
 
-    return pop_CD, F_CD, pop_obj, F_obj
 
 
-if __name__ == '__main__':
-    init_pop()
+
+# if __name__ == '__main__':
+#     init_pop()
