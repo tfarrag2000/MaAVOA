@@ -5,7 +5,7 @@ import numpy as np
 
 from AVOA_ManyObjectives.IGD import calculateigd
 from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
-from AVOA_ManyObjectives.many_objs.EvaluatePopulation import evaluatePopulation
+from AVOA_ManyObjectives.NonDominatedSorting.EvaluatePopulation import evaluatePopulation
 from exploitation import exploitation
 from exploration import exploration
 from initialization import initialization

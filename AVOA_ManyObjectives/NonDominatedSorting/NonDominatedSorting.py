@@ -13,7 +13,7 @@
 
 import numpy as np
 
-from AVOA_ManyObjectives.many_objs.Dominates import Dominates
+from AVOA_ManyObjectives.NonDominatedSorting.Dominates import Dominates
 
 
 def NonDominatedSorting(pop, n, AccordingTo):  # AccordingTo=0 by Conv and Diver ,  AccordingTo=1 by objective matrix

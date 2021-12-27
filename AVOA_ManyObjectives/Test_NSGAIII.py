@@ -3,6 +3,8 @@ from pymoo.factory import get_problem, get_reference_directions
 from pymoo.optimize import minimize
 from pymoo.visualization.scatter import Scatter
 
+from AVOA_ManyObjectives.AfricanMutation import AfricanMutation
+
 
 def init_pop():
     # create the reference directions to be used for the optimization
@@ -11,15 +13,15 @@ def init_pop():
     # Scatter().add(PF).show()
 
     # create the algorithm object
-    algorithm = NSGA3(pop_size=100,
+    algorithm = NSGA3(pop_size=100,mutation=AfricanMutation(eta=20, prob=1),
                       ref_dirs=ref_dirs)
 
     # execute the optimization
     res = minimize(get_problem("dtlz1",n_var=7, n_obj=3),
                    algorithm,
                    seed=1,
-                   termination=('n_gen', 400), save_history=True,
-                   verbose=False)
+                   termination=('n_gen', 200), save_history=True,
+                   verbose=True)
 
 
     Scatter(legend=True).add(PF, label="Pareto-front").add(res.F, label="Result").show()
