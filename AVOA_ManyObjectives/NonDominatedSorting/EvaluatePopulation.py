@@ -6,7 +6,6 @@ from AVOA_ManyObjectives.NonDominatedSorting.NonDominatedSorting import NonDomin
 from AVOA_ManyObjectives.NonDominatedSorting.SortPopulation import SortPopulation
 from AVOA_ManyObjectives.NonDominatedSorting.empty_individual import empty_individual
 
-
 # def init_pop():
 #     nPop = 100
 #     nobj = 3
@@ -31,9 +30,10 @@ from AVOA_ManyObjectives.NonDominatedSorting.empty_individual import empty_indiv
 #     x = np.array([1, np.asarray(F[0]).size])
 #     RS = random.randint(0, np.asarray(F[0]).size - 1)
 #     uide_sol = pop[RS].Position
+from AVOA_ManyObjectives.NonDominatedSorting.benchmark import benchmark_dtlz1
 
 
-def evaluatePopulation(X, n, benchmark,AccordingTo=-1):
+def evaluatePopulation(X, n, benchmark=benchmark_dtlz1,AccordingTo=-1):
     nPop = X.shape[0]
     # ### calculate objactive function
     objmatrix = benchmark(X)
@@ -71,12 +71,12 @@ def evaluatePopulation(X, n, benchmark,AccordingTo=-1):
 
     pop = []
     for i in range(nPop):
-        individual = empty_individual()
-        individual.Position = X[i, :]
         if AccordingTo!=1:
-            individual.Cost = perfermancmetric[i, :]
-        individual.Costobj = objmatrix[i, :]
-        pop.append(individual)
+            individual = empty_individual(X=X[i, :] , F= objmatrix[i, :],Cost=perfermancmetric[i, :])
+            pop.append(individual)
+        else:
+            individual = empty_individual(X=X[i, :] , F= objmatrix[i, :])
+            pop.append(individual)
 
     pop_CD=None
     F_CD=None

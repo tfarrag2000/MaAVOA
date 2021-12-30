@@ -13,11 +13,11 @@ from random_select import random_select
 from pymoo.visualization.scatter import Scatter
 
 
-def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_no):
+def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_no,benchmarkFn):
 
     X = initialization(pop_size, variables_no, upper_bound, lower_bound)
     X_init = deepcopy(X)
-      ##  Controlling parameter
+    ##  Controlling parameter
     p1 = 0.6
     p2 = 0.4
     p3 = 0.6
@@ -33,9 +33,9 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
     D_Position = []
     D_Cost = []
 
-    pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(X, pop_size, variables_no, Objective_no)
-    D_Position.extend([pop_obj[x].Position for x in F_obj[0]])
-    D_Cost.extend([pop_obj[x].Costobj for x in F_obj[0]])
+    pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(X, pop_size, benchmark=benchmarkFn,AccordingTo=-1)
+    D_Position.extend([pop_obj[x].X for x in F_obj[0]])
+    D_Cost.extend([pop_obj[x].F for x in F_obj[0]])
     pop = pop_obj
     F_Rank = F_obj
 
@@ -44,7 +44,6 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
         X_old = deepcopy(X)
 
         ################### select V(V) ###################
-
         Best_V1_id = random.choice(F_Rank[0])
         if len(F_Rank) == 1:
             Best_V2_id = random.choice(F_Rank[0])
@@ -52,12 +51,11 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
             Best_V2_id = random.choice(F_Rank[1])
         Best_V1_individual = pop[Best_V1_id]
         Best_V2_individual = pop[Best_V2_id]
-        Best_V1_X = Best_V1_individual.Position.reshape((1, variables_no))
-        Best_V2_X = Best_V2_individual.Position.reshape((1, variables_no))
+        Best_V1_X = Best_V1_individual.X.reshape((1, variables_no))
+        Best_V2_X = Best_V2_individual.X.reshape((1, variables_no))
 
         ################### Africian exploration & exploitation ###################
-        a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
-            (math.pi / 2) * (current_iter / max_iter)) - 1)
+        a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos((math.pi / 2) * (current_iter / max_iter)) - 1)
         P1 = (2 * np.random.rand() + 1) * (1 - (current_iter / max_iter)) + a
         # Update the location
         for i in range(X.shape[0]):
@@ -79,17 +77,17 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
         ##########################################################################
         X_intermediate = np.concatenate([X_old, X_new])
 
-        pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(X_intermediate, pop_size, variables_no, Objective_no)
-        pf = np.array([pop_obj[x].Costobj for x in F_obj[0]])
+        pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(X_intermediate, pop_size)
+        pf = np.array([pop_obj[x].F for x in F_obj[0]])
         print("IGD", calculateigd(truepf, pf))
-        D_Position.extend([pop_obj[x].Position for x in F_obj[0]])
-        D_Cost.extend([pop_obj[x].Costobj for x in F_obj[0]])
+        D_Position.extend([pop_obj[x].X for x in F_obj[0]])
+        D_Cost.extend([pop_obj[x].F for x in F_obj[0]])
 
-        X = np.array([p.Position for p in pop_CD])
+        X = np.array([p.X for p in pop_CD])
         print('In Iteration %d, best estimation of Conv. and Div. is %4.2f , %4.2f' % (
             current_iter, Best_V1_individual.Cost[0], Best_V1_individual.Cost[1]))
 
-        pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(np.array(D_Position).reshape((-1, variables_no)), pop_size, variables_no, Objective_no)
+        pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(np.array(D_Position).reshape((-1, variables_no)), pop_size)
         # to be used in selecting v1 ,v2
         pop = pop_obj
         F_Rank = F_obj
@@ -101,8 +99,8 @@ def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_n
     np.savetxt('Archive_CostObj.txt', Archive_CostObj, delimiter=',')
 
     pop_CD, F_CD, pop_obj, F_obj = evaluatePopulation(Archive, pop_size, variables_no, Objective_no)
-    X_list = np.array([pop_obj[x].Position for x in F_obj[0]]).reshape((-1, variables_no))
-    pf = np.array([pop_obj[x].Costobj for x in F_obj[0]]).reshape((-1, Objective_no))
+    X_list = np.array([pop_obj[x].X for x in F_obj[0]]).reshape((-1, variables_no))
+    pf = np.array([pop_obj[x].F for x in F_obj[0]]).reshape((-1, Objective_no))
 
     np.savetxt('pf.txt', X_list, delimiter=',')
     np.savetxt('pf_CostObj.txt', pf, delimiter=',')

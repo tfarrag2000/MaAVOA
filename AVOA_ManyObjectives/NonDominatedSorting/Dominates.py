@@ -24,8 +24,8 @@ def Dominates(x, y, AccordingTo):
         x = x.Cost
         y = y.Cost
     elif AccordingTo == 1:
-        x = x.Costobj
-        y = y.Costobj
+        x = x.F
+        y = y.F
 
     b1 = np.all(x <= y)
     b2 = np.any(x < y)

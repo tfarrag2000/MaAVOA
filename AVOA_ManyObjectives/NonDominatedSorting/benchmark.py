@@ -2,7 +2,7 @@ import numpy as np
 from deap.benchmarks import dtlz1
 
 
-def benchmark_dtlz1(X, variables_no, Objective_no):
+def benchmark_dtlz1(X, variables_no=7, Objective_no=3):
     # X=np.array([[0.5,0.5 ,0.5 ,0.5, 0.5, 0.5, 0.5]])
     # dtlz_problem = dtlz.DTLZ1(n_var=variables_no, n_obj=Objective_no)
     # g1 = dtlz_problem.g1(X)
