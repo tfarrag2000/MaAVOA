@@ -1,17 +1,15 @@
 import os
 import time
-from collections import Counter
 
 import numpy as np
-from fcmeans import FCM
-from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.core.initialization import Initialization
-from pymoo.core.population import Population
 from pymoo.factory import get_problem, get_reference_directions, get_visualization
 from pymoo.indicators.gd import GD
 from pymoo.indicators.igd import IGD
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.util.termination.no_termination import NoTermination
+
+from AVOA_ManyObjectives.MaAVOA import MaAVOA
 
 
 def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, saveResults=True):
@@ -25,7 +23,7 @@ def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, save
     initialization = Initialization(FloatRandomSampling())
     init_pop = initialization.do(problem, pop_size)
 
-    algorithm = NSGA3(pop_size=len(init_pop), ref_dirs=ref_dirs, sampling=init_pop)
+    algorithm = MaAVOA(pop_size=len(init_pop), ref_dirs=ref_dirs, sampling=init_pop)
     algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
 
     # until the algorithm has no terminated
@@ -47,7 +45,7 @@ def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, save
     # HV = Hypervolume(pf=PF).do(F)
     # gdPlus=GDPlus(pf=PF).do(F)
     if saveResults:
-        maindir = r'D:\OneDrive\My Research\Many_Objectives\The Code\AVOA_ManyObjectives\results\NSGAIII'
+        maindir = r'D:\OneDrive\My Research\Many_Objectives\The Code\AVOA_ManyObjectives\results\MaAVOA'
 
         dir = os.path.join(maindir, '{}\\run_{}\\'.format(problemfullname, runID))
         os.makedirs(dir, exist_ok=True)
@@ -72,43 +70,8 @@ def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, save
     return n_gen, igd, gd
 
 
-def runAlgorithm(algorithm, problem, pop_list):
-    pop = algorithm.ask()
-    algorithm.evaluator.eval(problem, pop)
-    algorithm.tell(infills=pop)
-    pop_list.append(pop)
-
-
-def do_Clustring(init_pop, n_clusters):
-    if isinstance(init_pop, Population):
-        X = init_pop.get("X")
-    # elif isinstance(init_pop,np.ndarray):
-    #     X=init_pop
-    # elif isinstance(init_pop,list):
-    #     X=np.array(init_pop)
-
-    fcm = FCM(n_clusters=n_clusters)
-    fcm.fit(X)
-    # outputs
-
-    fcm_centers = fcm.centers
-    fcm_labels = fcm.predict(X)
-    fcm_stat = Counter(fcm_labels)
-    init_pop.set("Cluster", fcm_labels)
-    init_pop.set("Data", None)
-
-    list_pop = []
-    for i in range(n_clusters):
-        list_pop.append([])
-
-    for p in init_pop:
-        list_pop[p.data["Cluster"]].append(p.X)
-
-    return list_pop
-
-
 if __name__ == '__main__':
-    generation_no = 2
+    generation_no = 200
     pop_size = 1000
     for runId in range(1, 2):
         for Objective_no in [3, 5, 8, 10]:
@@ -119,6 +82,6 @@ if __name__ == '__main__':
 
                 problem = get_problem(problem_name, n_var=variables_no, n_obj=Objective_no)
                 problem.Name = problem_name
-                problem.AlgorithmName = "NSGAIII"
+                problem.AlgorithmName = "MaAVOA"
 
-                setupFrameWork(problem, pop_size, Objective_no, generation_no, runId, False)
+                setupFrameWork(problem, pop_size, Objective_no, generation_no, runId)

@@ -13,7 +13,8 @@
 # }
 
 import matplotlib.pyplot as plt
-from AVOA import AVOA
+
+from old_trials.AVOA import AVOA
 
 pop_size = 100
 max_iter = 100

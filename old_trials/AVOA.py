@@ -3,14 +3,13 @@ import random
 from copy import deepcopy
 import numpy as np
 
-from AVOA_ManyObjectives.IGD import calculateigd
+from old_trials.IGD import calculateigd
 from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
-from AVOA_ManyObjectives.NonDominatedSorting.EvaluatePopulation import evaluatePopulation
+from old_trials.NonDominatedSorting.EvaluatePopulation import evaluatePopulation
 from exploitation import exploitation
 from exploration import exploration
 from initialization import initialization
-from random_select import random_select
-from pymoo.visualization.scatter import Scatter
+from old_trials.random_select import random_select
 
 
 def AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no, Objective_no,benchmarkFn):

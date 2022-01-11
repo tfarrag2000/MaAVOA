@@ -6,7 +6,6 @@ from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival
 from pymoo.core.algorithm import Algorithm
 from pymoo.core.duplicate import DefaultDuplicateElimination, NoDuplicateElimination
 from pymoo.core.initialization import Initialization
-from pymoo.core.mating import Mating
 from pymoo.core.population import Population, pop_from_array_or_individual
 from pymoo.core.repair import NoRepair
 from pymoo.operators.mutation.pm import PolynomialMutation
@@ -14,9 +13,9 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.util.display import MultiObjectiveDisplay
 from pymoo.util.misc import has_feasible
 
-from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
-from AVOA_ManyObjectives.exploitation import exploitation
-from AVOA_ManyObjectives.exploration import exploration
+from boundaryCheck import boundaryCheck
+from exploitation import exploitation
+from exploration import exploration
 
 
 class MaAVOA(Algorithm):
@@ -32,7 +31,7 @@ class MaAVOA(Algorithm):
                  **kwargs
                  ):
 
-        super().__init__( display = MultiObjectiveDisplay(),**kwargs)
+        super().__init__(display=MultiObjectiveDisplay(), **kwargs)
         self.ref_dirs = ref_dirs
 
         if self.ref_dirs is not None:
@@ -51,7 +50,6 @@ class MaAVOA(Algorithm):
             del kwargs['survival']
         else:
             survival = ReferenceDirectionSurvival(ref_dirs)
-
 
         # the population size used
         self.pop_size = pop_size
@@ -85,19 +83,10 @@ class MaAVOA(Algorithm):
                                              repair=self.repair,
                                              eliminate_duplicates=self.eliminate_duplicates)
 
-        # if mating is None:
-        #     mating = Mating(selection,
-        #                     crossover,
-        #                     mutation,
-        #                     repair=self.repair,
-        #                     eliminate_duplicates=self.eliminate_duplicates,
-        #                     n_max_iterations=100)
-        # self.mating = mating
-
         # other run specific data updated whenever solve is called - to share them in all algorithms
         self.n_gen = None
         self.pop = None
-        self.ARC=Population()
+        self.ARC = Population()
 
     def _setup(self, problem, **kwargs):
 
@@ -113,7 +102,6 @@ class MaAVOA(Algorithm):
         else:
             self.opt = self.survival.opt
 
-
     def _initialize_infill(self):
         pop = self.initialization.do(self.problem, self.pop_size, algorithm=self)
         pop.set("n_gen", self.n_gen)
@@ -127,29 +115,18 @@ class MaAVOA(Algorithm):
     def _infill(self):
 
         # do the mating using the current population
-        # off = self.mating.do(self.problem, self.pop, self.n_offsprings, algorithm=self)
-        FP_iter =[]
-        V2_Leaders = np.full((self.problem.n_obj,),None)
-        Top_F=np.full((self.problem.n_obj,),np.inf)
+        ########## create the archive
+        FP_iter1 = self.survival.opt
+        ARC_unsorted = Population.merge(self.ARC, FP_iter1)
+        survival1 = ReferenceDirectionSurvival(self.ref_dirs)
+        xx = survival1.do(self.problem, ARC_unsorted, n_survive=500)  # 500 maximum number
+        self.ARC = survival1.opt  # PF of the archive
+        ###################################
 
-        for p in self.pop:
-            rank=p.data['rank']
-            F=p.F
-            if rank==0:
-                FP_iter.append(p)
-
-            for i in range(len(Top_F)):
-                if F[i]<Top_F[i]:
-                    Top_F[i]=F[i]
-                    V2_Leaders[i]=p
-
-        self.ARC =np.append(self.ARC ,FP_iter)
-
-
-        Best_V1_X = self.__selectV1(self.ARC.tolist()).X
-        Best_V2_X = self.__selectV2(V2_Leaders).X
-        X=np.array([p.X for p in self.pop])
-        variables_no=self.problem.n_var
+        Best_V1_X = self.__selectV1(self.ARC)
+        Best_V2_X = self.__selectV2(self.ARC)
+        X = np.array([p.X for p in self.pop])
+        variables_no = self.problem.n_var
 
         ################### Africian exploration & exploitation ###################
         p1 = 0.6
@@ -158,10 +135,10 @@ class MaAVOA(Algorithm):
         alpha = 0.8
         betha = 0.2
         gamma = 2.5
-        current_iter =1
-        max_iter=1
+        current_iter = 1
+        max_iter = 1
         upper_bound = self.problem.xu[0]
-        lower_bound =  self.problem.xl[0]
+        lower_bound = self.problem.xl[0]
 
         a = np.random.uniform(- 2, 2, (1, 1)) * ((np.sin((math.pi / 2) * (current_iter / max_iter)) ** gamma) + np.cos(
             (math.pi / 2) * (current_iter / max_iter)) - 1)
@@ -183,10 +160,10 @@ class MaAVOA(Algorithm):
 
         X_new = boundaryCheck(X, lower_bound, upper_bound)
 
-        off   =pop_from_array_or_individual(X_new)
+        off = pop_from_array_or_individual(X_new)
         ##########################################################################
         mutation = PolynomialMutation(eta=20, prob=None)
-        off=mutation.do(self.problem,off)
+        off = mutation.do(self.problem, off)
         # if the mating could not generate any new offspring (duplicate elimination might make that happen)
         if len(off) == 0:
             self.termination.force_termination = True
@@ -199,19 +176,30 @@ class MaAVOA(Algorithm):
 
         return off
 
-    def __selectV1(self, V1_Leaders):
-        V1_Leaders = list(set(V1_Leaders))
-        V1_1,V1_2= random.sample(V1_Leaders,k=2)
+    def __selectV1(self, ARC):
 
-        if V1_1.data['niche']<V1_2.data['niche']:
-            return V1_1
+        if len(ARC) < 2:
+            return ARC[0].get("X")
+
+        V1_idx1, V1_idx2 = random.sample(range(len(ARC)), k=2)
+        V1_1, V1_2 = ARC[V1_idx1], ARC[V1_idx2]
+
+        if V1_1.data['niche'] < V1_2.data['niche']:
+            return V1_1.get("X")
         else:
-            return V1_2
+            return V1_2.get("X")
 
+    def __selectV2(self, ARC):
+        V2_Leaders = np.full((self.problem.n_obj,), None)
+        min_F = np.full((self.problem.n_obj,), np.inf)
 
-    def __selectV2(self,V2_Leaders):
+        for p in ARC:
+            for i in range(len(min_F)):
+                if p.F[i] < min_F[i]:
+                    min_F[i] = p.F[i]
+                    V2_Leaders[i] = p
 
-        return random.choice(V2_Leaders)
+        return random.choice(V2_Leaders).get("X")
 
     def _advance(self, infills=None, **kwargs):
 
@@ -221,5 +209,3 @@ class MaAVOA(Algorithm):
         # execute the survival to find the fittest solutions
         self.pop = self.survival.do(self.problem, self.pop, n_survive=self.pop_size, algorithm=self)
         pass
-
-

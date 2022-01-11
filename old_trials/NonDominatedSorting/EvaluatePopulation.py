@@ -2,9 +2,9 @@ from copy import deepcopy
 
 import numpy as np
 from numpy import linalg as LA
-from AVOA_ManyObjectives.NonDominatedSorting.NonDominatedSorting import NonDominatedSorting
-from AVOA_ManyObjectives.NonDominatedSorting.SortPopulation import SortPopulation
-from AVOA_ManyObjectives.NonDominatedSorting.empty_individual import empty_individual
+from old_trials.NonDominatedSorting.NonDominatedSorting import NonDominatedSorting
+from old_trials.NonDominatedSorting.SortPopulation import SortPopulation
+from old_trials.NonDominatedSorting.empty_individual import empty_individual
 
 # def init_pop():
 #     nPop = 100
@@ -30,7 +30,7 @@ from AVOA_ManyObjectives.NonDominatedSorting.empty_individual import empty_indiv
 #     x = np.array([1, np.asarray(F[0]).size])
 #     RS = random.randint(0, np.asarray(F[0]).size - 1)
 #     uide_sol = pop[RS].Position
-from AVOA_ManyObjectives.NonDominatedSorting.benchmark import benchmark_dtlz1
+from old_trials.NonDominatedSorting.benchmark import benchmark_dtlz1
 
 
 def evaluatePopulation(X, n, benchmark=benchmark_dtlz1,AccordingTo=-1):
