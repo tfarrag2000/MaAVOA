@@ -41,7 +41,7 @@ def setupFrameWork(algorithmClass, problem, Objective_no, termination=None, pop_
     # initialization = Initialization(FloatRandomSampling())
     # init_pop = initialization.do(problem, pop_size)
 
-    algorithm = algorithmClass(ref_dirs=ref_dirs, pop_size=pop_size)
+    algorithm = algorithmClass(ref_dirs=ref_dirs, pop_size=5)
     # algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
 
     start_time = time.time()
