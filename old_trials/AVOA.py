@@ -4,7 +4,7 @@ from copy import deepcopy
 import numpy as np
 
 from old_trials.IGD import calculateigd
-from AVOA_ManyObjectives.boundaryCheck import boundaryCheck
+from MaAVOA.boundaryCheck import boundaryCheck
 from old_trials.NonDominatedSorting.EvaluatePopulation import evaluatePopulation
 from exploitation import exploitation
 from exploration import exploration

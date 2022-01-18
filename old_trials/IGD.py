@@ -35,3 +35,6 @@ def IGD(truePF, PF):
 
     igdVal = sumMin / len(truePF)
     return igdVal
+
+
+

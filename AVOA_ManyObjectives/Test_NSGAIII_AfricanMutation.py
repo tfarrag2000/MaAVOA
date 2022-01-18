@@ -10,7 +10,7 @@ from pymoo.indicators.igd import IGD
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.util.termination.no_termination import NoTermination
 
-from AVOA_ManyObjectives.AfricanMutation import AfricanMutation
+from MaAVOA.AfricanMutation import AfricanMutation
 
 
 def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, saveResults=True):

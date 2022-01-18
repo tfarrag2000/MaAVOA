@@ -136,24 +136,27 @@ class MaAVOA_v2(Algorithm):
 
         # do the mating using the current population
         ########## create and update the archive
-        self.__updateARC()
+        ARC_off= self.__updateARC()
         ###################################
 
-
-
         Best_V1_X = self.__selectV1(self.ARC)
-        Best_V2_X = self.__selectV2(self.pop)
+        Best_V2_X = self.__selectV2(Population.merge(self.pop, ARC_off))
 
-        pop_african,pop_unmutated= model_selection.train_test_split(self.pop,test_size=0.01, random_state=42)
-        variables_no = self.problem.n_var
-        ###############################
-        mutation=PolynomialMutation(eta=20, prob=0.2)
-        X_unmutated=pop_unmutated.get("X")
-        pop_mutated = mutation.do(self.problem, pop_unmutated)
-        X_mutated=pop_mutated.get("X")
 
+
+        # pop_african,pop_unmutated= model_selection.train_test_split(self.pop,test_size=0.0, random_state=42)
+        # ###############################
+        # mutation=PolynomialMutation(eta=20, prob=None)
+        # X_unmutated=pop_unmutated.get("X")
+        # pop_mutated = mutation.do(self.problem, pop_unmutated)
+        # X_mutated=pop_mutated.get("X")
+
+        pop_african=self.pop
         ################### Africian exploration & exploitation ###################
+        variables_no = self.problem.n_var
         X_african=pop_african.get("X")
+        xx=np.unique(X_african, axis=0)
+
         p1 = 0.6
         p2 = 0.4
         p3 = 0.6
@@ -184,11 +187,15 @@ class MaAVOA_v2(Algorithm):
             X_african[i, :] = current_V_X
 
         X_african_new = boundaryCheck(X_african, lower_bound, upper_bound)
-        X_new=np.concatenate((X_african_new,X_mutated),axis=0)
-        off = pop_from_array_or_individual(X_new)
+        # X_new=np.concatenate((X_african_new,X_mutated),axis=0)
+        xx=np.unique(X_african_new, axis=0)
+        off_african = pop_from_array_or_individual(X_african_new)
         ##########################################################################
-        mutation = PolynomialMutation(eta=20, prob=.25)
-        off = mutation.do(self.problem, off)
+        mutation = PolynomialMutation(eta=20, prob=.20)
+        off_mutated = mutation.do(self.problem, off_african)
+
+        off=Population.merge(ARC_off,Population.merge(off_african,off_mutated))
+
         # if the mating could not generate any new offspring (duplicate elimination might make that happen)
         if len(off) == 0:
             self.termination.force_termination = True
@@ -234,18 +241,18 @@ class MaAVOA_v2(Algorithm):
         crossover=SimulatedBinaryCrossover(eta=30, prob=1.0)
         mutation=PolynomialMutation(eta=20, prob=None)
 
-        n_select = math.ceil(len(ARC_unsorted)*0.1 / crossover.n_offsprings)
+        n_select = math.ceil(len(ARC_unsorted) / crossover.n_offsprings)
         parents = selection.do(ARC_unsorted, n_select, crossover.n_parents)
         ARC_off = crossover.do(self.problem, ARC_unsorted, parents)
         ARC_off = mutation.do(self.problem, ARC_off)
         self.evaluator.eval(self.problem, ARC_off)
 
         ARC_unsorted = Population.merge(ARC_unsorted, ARC_off)
-
         survival1 = ReferenceDirectionSurvival(self.ref_dirs)
         xx = survival1.do(self.problem, ARC_unsorted, n_survive=100)  # 100 maximum number
         self.ARC = survival1.opt  # PF of the archive
-        pass
+
+        return ARC_off
 
     def _advance(self, infills=None, **kwargs):
 
