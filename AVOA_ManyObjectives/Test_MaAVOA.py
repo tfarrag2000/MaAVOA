@@ -41,7 +41,7 @@ def setupFrameWork(algorithmClass, problem, Objective_no, termination=None, pop_
     # initialization = Initialization(FloatRandomSampling())
     # init_pop = initialization.do(problem, pop_size)
 
-    algorithm = algorithmClass(ref_dirs=ref_dirs, pop_size=5)
+    algorithm = algorithmClass(ref_dirs=ref_dirs, pop_size=pop_size)
     # algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
 
     start_time = time.time()
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     # ALGORITHMS = [("nsga3_das_IGD30000", NSGA3)]
 
     ALGORITHMS = [("MaAVOA", MaAVOA_v2)]
-    termination = get_termination("n_gen", 190)
+    termination = get_termination("n_gen", 2500)
 
     for runId in range(1, 2):
         for Objective_no in [3, ]:

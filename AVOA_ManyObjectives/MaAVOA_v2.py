@@ -155,7 +155,6 @@ class MaAVOA_v2(Algorithm):
         ################### Africian exploration & exploitation ###################
         variables_no = self.problem.n_var
         X_african=pop_african.get("X")
-        xx=np.unique(X_african, axis=0)
 
         p1 = 0.6
         p2 = 0.4
@@ -163,8 +162,8 @@ class MaAVOA_v2(Algorithm):
         alpha = 0.8
         betha = 0.2
         gamma = 2.5
-        current_iter = 1
-        max_iter = 1
+        current_iter = self.n_gen
+        max_iter = 500
         upper_bound = self.problem.xu[0]
         lower_bound = self.problem.xl[0]
 
@@ -187,14 +186,18 @@ class MaAVOA_v2(Algorithm):
             X_african[i, :] = current_V_X
 
         X_african_new = boundaryCheck(X_african, lower_bound, upper_bound)
-        # X_new=np.concatenate((X_african_new,X_mutated),axis=0)
-        xx=np.unique(X_african_new, axis=0)
+
+
         off_african = pop_from_array_or_individual(X_african_new)
         ##########################################################################
         mutation = PolynomialMutation(eta=20, prob=.20)
         off_mutated = mutation.do(self.problem, off_african)
 
-        off=Population.merge(ARC_off,Population.merge(off_african,off_mutated))
+        X_new = np.concatenate((X_african_new, off_mutated.get("X")), axis=0)
+        xx = np.unique(X_new, axis=0)
+        off_1 = pop_from_array_or_individual(xx)
+
+        off=Population.merge(ARC_off,off_1)
 
         # if the mating could not generate any new offspring (duplicate elimination might make that happen)
         if len(off) == 0:
