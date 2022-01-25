@@ -1,43 +1,47 @@
-# This is a sample Python script.
+# African Vulture Optimization alghorithm
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-# %matplotlib inline
-import numpy as np
-from fcmeans import FCM  # pip install fuzzy-c-means
+# Read the following publication first and cite if you use it
 
-from matplotlib import pyplot as plt
+# @article{abdollahzadeh2021african,
+#   title={African Vultures Optimization Algorithm: A New Nature-Inspired Metaheuristic Algorithm for Global Optimization Problems},
+#   author={Abdollahzadeh, Benyamin and Gharehchopogh, Farhad Soleimanian and Mirjalili, Seyedali},
+#   journal={Computers \& Industrial Engineering},
+#   pages={107408},
+#   year={2021},
+#   publisher={Elsevier},
+#   url = {https://www.sciencedirect.com/science/article/pii/S0360835221003120}
+# }
 
+import matplotlib.pyplot as plt
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    n_samples = 250
+from old_trials.AVOA import AVOA
 
-    C1 = [-5, -2] + 0.8 * np.random.randn(n_samples, 2)
-    C2 = [4, -1] + 0.1 * np.random.randn(n_samples, 2)
-    C3 = [1, -2] + 0.2 * np.random.randn(n_samples, 2)
-    C4 = [-2, 3] + 0.3 * np.random.randn(n_samples, 2)
-    C5 = [3, -2] + 1.6 * np.random.randn(n_samples, 2)
-    C6 = [5, 6] + 2 * np.random.randn(n_samples, 2)
-    X = np.vstack((C1, C2, C3, C4, C5, C6))
+pop_size = 100
+max_iter = 100
 
-    fcm = FCM(n_clusters=2)
-    fcm.fit(X)
-    # outputs
-    fcm_centers = fcm.centers
-    fcm_labels = fcm.predict(X)
+# https://github.com/MOEAFramework/MOEAFramework/tree/master/pf
 
-    # plot result
-    f, axes = plt.subplots(1, 2, figsize=(11, 5))
-    axes[0].scatter(X[:, 0], X[:, 1], alpha=.1)
-    axes[1].scatter(X[:, 0], X[:, 1], c=fcm_labels, alpha=.1)
-    axes[1].scatter(fcm_centers[:, 0], fcm_centers[:, 1], marker="+", s=200, c='black')
-    plt.savefig('basic-clustering-output.jpg')
-    plt.show()
+Objective_no = 3
+variables_no = Objective_no + 5 - 1
 
+lower_bound = 0
+upper_bound = 1
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+Best_vulture1_F, Best_vulture1_X, convergence_curve = AVOA(pop_size, max_iter, lower_bound, upper_bound, variables_no,
+                                                           Objective_no)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Best optimal values for the decision variables
+plt.figure
+plt.subplot(1, 2, 1)
+plt.plot(Best_vulture1_X)
+plt.xlabel('Decision variables')
+plt.ylabel('Best estimated values ')
+plt.box('on')
+# Best convergence curve
+plt.subplot(1, 2, 2)
+plt.plot(convergence_curve)
+plt.title('Convergence curve of AVOA')
+plt.xlabel('Current_iteration')
+plt.ylabel('Objective value')
+plt.box('on')
+plt.show()

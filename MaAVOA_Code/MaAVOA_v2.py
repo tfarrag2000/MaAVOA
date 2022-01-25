@@ -1,14 +1,11 @@
 import math
 import random
 
-import numpy
 import numpy as np
-from  sklearn import model_selection
 from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival
 from pymoo.core.algorithm import Algorithm
 from pymoo.core.duplicate import DefaultDuplicateElimination, NoDuplicateElimination
 from pymoo.core.initialization import Initialization
-from pymoo.core.mating import Mating
 from pymoo.core.population import Population, pop_from_array_or_individual
 from pymoo.core.repair import NoRepair
 from pymoo.operators.crossover.sbx import SimulatedBinaryCrossover
@@ -21,6 +18,7 @@ from pymoo.util.misc import has_feasible
 from boundaryCheck import boundaryCheck
 from exploitation import exploitation
 from exploration import exploration
+
 
 def comp_by_cv_then_random(pop, P, **kwargs):
     S = np.full(P.shape[0], np.nan)
@@ -37,6 +35,7 @@ def comp_by_cv_then_random(pop, P, **kwargs):
             S[i] = np.random.choice([a, b])
 
     return S[:, None].astype(int)
+
 
 class MaAVOA_v2(Algorithm):
 
@@ -107,6 +106,8 @@ class MaAVOA_v2(Algorithm):
         self.n_gen = None
         self.pop = None
         self.ARC = Population()
+        self.MaAVOA_p1 = 0.7
+        self.MaAVOA_p2 = 0.9
 
     def _setup(self, problem, **kwargs):
 
@@ -136,13 +137,11 @@ class MaAVOA_v2(Algorithm):
 
         # do the mating using the current population
         ########## create and update the archive
-        ARC_off= self.__updateARC()
+        ARC_off = self.__updateARC()
         ###################################
 
         Best_V1_X = self.__selectV1(self.ARC)
         Best_V2_X = self.__selectV2(Population.merge(self.pop, ARC_off))
-
-
 
         # pop_african,pop_unmutated= model_selection.train_test_split(self.pop,test_size=0.0, random_state=42)
         # ###############################
@@ -151,10 +150,15 @@ class MaAVOA_v2(Algorithm):
         # pop_mutated = mutation.do(self.problem, pop_unmutated)
         # X_mutated=pop_mutated.get("X")
 
-        pop_african=self.pop
+        pop_african = self.pop
         ################### Africian exploration & exploitation ###################
         variables_no = self.problem.n_var
-        X_african=pop_african.get("X")
+        X_african_all = pop_african.get("X")
+        indices = np.random.choice(X_african_all.shape[0], round(X_african_all.shape[0] * self.MaAVOA_p1),
+                                   replace=False)
+        X_african = X_african_all[indices]
+        # indices = np.random.choice(X_african.shape[0], 75, replace=False)
+        # X_african=X_african[indices]
 
         p1 = 0.6
         p2 = 0.4
@@ -187,18 +191,16 @@ class MaAVOA_v2(Algorithm):
 
         X_african_new = boundaryCheck(X_african, lower_bound, upper_bound)
 
-
         off_african = pop_from_array_or_individual(X_african_new)
         ##########################################################################
-        mutation = PolynomialMutation(eta=20, prob=.20)
+        mutation = PolynomialMutation(eta=20, prob=.2)
         off_mutated = mutation.do(self.problem, off_african)
 
-        X_new = np.concatenate((X_african_new, off_mutated.get("X")), axis=0)
-        xx = np.unique(X_new, axis=0)
-        off_1 = pop_from_array_or_individual(xx)
+        X_new = np.unique(np.concatenate((X_african_new, off_mutated.get("X")), axis=0), axis=0)
 
-        off=Population.merge(ARC_off,off_1)
-
+        off_new = pop_from_array_or_individual(X_new)
+        # off_new =Population.merge(off_mutated,off_mutated)
+        off = Population.merge(ARC_off, off_new)
         # if the mating could not generate any new offspring (duplicate elimination might make that happen)
         if len(off) == 0:
             self.termination.force_termination = True
@@ -240,11 +242,11 @@ class MaAVOA_v2(Algorithm):
         FP_iter1 = self.survival.opt
         ARC_unsorted = Population.merge(self.ARC, FP_iter1)
 
-        selection=TournamentSelection(func_comp=comp_by_cv_then_random)
-        crossover=SimulatedBinaryCrossover(eta=30, prob=1.0)
-        mutation=PolynomialMutation(eta=20, prob=None)
+        selection = TournamentSelection(func_comp=comp_by_cv_then_random)
+        crossover = SimulatedBinaryCrossover(eta=30, prob=1.0)
+        mutation = PolynomialMutation(eta=20, prob=None)
 
-        n_select = math.ceil(len(ARC_unsorted) / crossover.n_offsprings)
+        n_select = math.ceil(len(ARC_unsorted) * self.MaAVOA_p2 / crossover.n_offsprings)
         parents = selection.do(ARC_unsorted, n_select, crossover.n_parents)
         ARC_off = crossover.do(self.problem, ARC_unsorted, parents)
         ARC_off = mutation.do(self.problem, ARC_off)
@@ -254,7 +256,6 @@ class MaAVOA_v2(Algorithm):
         survival1 = ReferenceDirectionSurvival(self.ref_dirs)
         xx = survival1.do(self.problem, ARC_unsorted, n_survive=100)  # 100 maximum number
         self.ARC = survival1.opt  # PF of the archive
-
         return ARC_off
 
     def _advance(self, infills=None, **kwargs):
@@ -265,4 +266,3 @@ class MaAVOA_v2(Algorithm):
         # execute the survival to find the fittest solutions
         self.pop = self.survival.do(self.problem, self.pop, n_survive=self.pop_size, algorithm=self)
         pass
-
