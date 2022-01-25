@@ -7,13 +7,12 @@ from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.unsga3 import UNSGA3
 from pymoo.factory import get_reference_directions, get_visualization, get_problem, get_termination
-from pymoo.indicators.gd import GD
 from pymoo.indicators.hv import Hypervolume
 from pymoo.indicators.igd import IGD
 from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.optimize import minimize
 
-from AVOA_ManyObjectives.MaAVOA_v2 import MaAVOA_v2
+from MaAVOA_Code.MaAVOA import MaAVOA
 
 
 def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True):
@@ -39,7 +38,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
     PF = problem.pareto_front(ref_dirs)
 
-    #np.savetxt('ref_dirs_{}.txt'.format(Objective_no,len(ref_dirs)), ref_dirs, delimiter=',')
+    # np.savetxt('ref_dirs_{}.txt'.format(Objective_no,len(ref_dirs)), ref_dirs, delimiter=',')
     # np.savetxt('PF_{}_{}.txt'.format(problem.Name,n_obj), PF, delimiter=',')
 
     if termination == None:
@@ -62,15 +61,14 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     F = res.opt.get("F")
     X = res.opt.get("X")
     n_gen = res.algorithm.n_gen
-    n_eval=res.algorithm.evaluator.n_eval
+    n_eval = res.algorithm.evaluator.n_eval
     igd = IGD(PF, zero_to_one=False).do(F)
-    gd = 0 # GD(PF, zero_to_one=False).do(F)
-    HV=0
-    if n_obj ==3:
-        HV =Hypervolume(ref_point=np.ones(n_obj)).do(F)
+    gd = 0  # GD(PF, zero_to_one=False).do(F)
+    HV = 0
+    if n_obj == 3:
+        HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
 
     igdplus = IGDPlus(PF, zero_to_one=False).do(F)
-
 
     exec_time = res.exec_time
     if saveResults:
@@ -110,26 +108,25 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
             file.write(
                 "problem_Name, n_obj, AlgorithmName, n_gen,n_eval, pop_size, exec_time, igd, gd, HV, igdplus\n")
             file.write("{}, {}, {}, {}, {}, {}, {}, {}, {}, {},{}\n".format(problem.Name,
-                                                                         n_obj, problem.AlgorithmName,
-                                                                         n_gen, n_eval, res.pop.shape[0],
-                                                                         round(exec_time, 3),
-                                                                         igd, gd, HV, igdplus))
+                                                                            n_obj, problem.AlgorithmName,
+                                                                            n_gen, n_eval, res.pop.shape[0],
+                                                                            round(exec_time, 3),
+                                                                            igd, gd, HV, igdplus))
 
-    print(igd ,HV ,igdplus)
+    print(igd, HV, igdplus)
     return igd, gd
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_v2), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
                   ("ctaea", CTAEA)]
-
 
     # termination = get_termination("n_eval", 200)
     termination = get_termination("n_gen", 500)
 
     for runId in range(2, 3):
-        for Objective_no in [ 3,5,8,10,15]:
-            for pID in [1,2,3,4]:  # dtlz
+        for Objective_no in [3, 5, 8, 10, 15]:
+            for pID in [1, 2, 3, 4]:  # dtlz
                 for alg, algorithmClass in ALGORITHMS:
                     k = 10
                     if (pID == 1):
@@ -141,4 +138,3 @@ if __name__ == '__main__':
                     problem.AlgorithmName = alg
                     setupFrameWork(algorithmClass, problem, Objective_no, termination=termination, runID=runId,
                                    saveResults=True)
-

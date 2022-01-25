@@ -8,12 +8,9 @@ from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival, NSGA3
 from pymoo.core.initialization import Initialization
 from pymoo.core.population import Population, pop_from_array_or_individual
 from pymoo.factory import get_reference_directions, get_visualization, get_problem
-from pymoo.indicators.hv import Hypervolume
 from pymoo.indicators.igd import IGD
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.util.termination.no_termination import NoTermination
-
-from MaAVOA import MaAVOA
 
 
 def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, saveResults=True, n_clusters=3,
@@ -34,7 +31,7 @@ def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, save
     algorithms = []
 
     for i in range(n_clusters):
-        alg_pop=list_init_pop[i]
+        alg_pop = list_init_pop[i]
         # algorithm = MaAVOA(pop_size=len(alg_pop), ref_dirs=ref_dirs, sampling=np.array(alg_pop))
         algorithm = NSGA3(pop_size=len(alg_pop), ref_dirs=ref_dirs, sampling=np.array(alg_pop))
 
@@ -86,9 +83,9 @@ def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, save
     # find the pareto_front of the combined results
     F = survival.opt.get("F")
     X = survival.opt.get("X")
-    igd = round(IGD(PF, zero_to_one=True).do(F),3)
+    igd = round(IGD(PF, zero_to_one=True).do(F), 3)
     gd = 0  # GD(PF, zero_to_one=True).do(F)
-    HV = 0 # round(Hypervolume(PF).do(F),3)
+    HV = 0  # round(Hypervolume(PF).do(F),3)
     gdPlus = 0  # GDPlus(pf=PF).do(F)
     if saveResults:
         maindir = r'D:\OneDrive\My Research\Many_Objectives\The Code\AVOA_ManyObjectives\results'
@@ -121,13 +118,12 @@ def setupFrameWork(problem, pop_size, Objective_no, generation_no, runID=1, save
             file.write("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n".format(problem.Name,
                                                                                  Objective_no, problem.AlgorithmName,
                                                                                  n_clusters,
-                                                                                 Combined_every, n_gen + 1, pop_size, round(exec_time,3),
+                                                                                 Combined_every, n_gen + 1, pop_size,
+                                                                                 round(exec_time, 3),
                                                                                  igd, gd, HV, gdPlus))
 
     print(n_gen, igd, HV)
     return n_gen, igd, HV
-
-
 
 
 def do_Clustring(init_pop, n_clusters):
@@ -161,8 +157,8 @@ if __name__ == '__main__':
 
     for runId in range(1, 2):
         for Objective_no in [3]:
-            for Combined_every in [1,10,100,200]:
-                for n_clusters in [1,3 ,5]:
+            for Combined_every in [1, 10, 100, 200]:
+                for n_clusters in [1, 3, 5]:
                     for pID in [1]:  # dtlz
                         k = 5
                         variables_no = Objective_no + k - 1

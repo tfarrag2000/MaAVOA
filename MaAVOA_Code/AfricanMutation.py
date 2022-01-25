@@ -7,8 +7,8 @@ from pymoo.core.mutation import Mutation
 from pymoo.core.population import pop_from_array_or_individual
 from pymoo.operators.repair.to_bound import set_to_bounds_if_outside_by_problem
 
-from MaAVOA.exploitation import exploitation
-from MaAVOA.exploration import exploration
+from old_trials.MaAVOA import exploitation
+from old_trials.MaAVOA import exploration
 
 
 class AfricanMutation(Mutation):
