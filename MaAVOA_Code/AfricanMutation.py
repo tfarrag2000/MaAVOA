@@ -76,7 +76,7 @@ class AfricanMutation(Mutation):
         P1 = (2 * np.random.rand() + 1) * (1 - (current_iter / max_iter)) + a
         # Update the location
         for i in range(X.shape[0]):
-            if do_mutation[i] == True:
+            if do_mutation[i]:
                 current_V_X = X[i, :]
                 F = P1 * (2 * np.random.rand() - 1)
                 random_V_X = random.choice([Best_V1_X, Best_V2_X])
@@ -96,7 +96,7 @@ class AfricanMutation(Mutation):
 
     def __selectV1(self, V1_Leaders):
         V1_Leaders = list(filter(None, set(V1_Leaders)))
-        if (len(V1_Leaders) < 2):
+        if len(V1_Leaders) < 2:
             return V1_Leaders[0]
         V1_1, V1_2 = random.sample(V1_Leaders, k=2)
 

@@ -130,14 +130,15 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
                   ("ctaea", CTAEA)]
-    termination = get_termination("n_eval", 100000) # run 2
-    # termination = get_termination("n_gen", 500) # run 1
+    # termination = get_termination("n_eval", 100000) # run 2
+    termination = get_termination("n_gen", 500) # run 1
     # termination = get_termination("time", "00:00:30")  # run 3
 
-    for runId in [22]:
+    for runId in [11]:
         for n_obj in [3,5,8,10,15]:
             for pID in [1,2,3,4,5,6,7]:  # dtlz
                 for alg, algorithmClass in ALGORITHMS:
+
                     k = 10
                     if pID == 1:
                         k = 5
@@ -155,6 +156,8 @@ if __name__ == '__main__':
                     if os.path.exists(dir):
                         print("{}  done".format(problemfullname))
                         continue
+
+
 
                     setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,
                                    saveResults=True)

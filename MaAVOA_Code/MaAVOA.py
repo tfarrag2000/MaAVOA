@@ -1,5 +1,6 @@
 import math
 import random
+import copy
 
 import numpy as np
 from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival
@@ -154,11 +155,13 @@ class MaAVOA(Algorithm):
         ################### Africian exploration & exploitation ###################
         variables_no = self.problem.n_var
         X_african_all = pop_african.get("X")
-        indices = np.random.choice(X_african_all.shape[0], round(X_african_all.shape[0] * self.MaAVOA_p1),
-                                   replace=False)
-        X_african = X_african_all[indices]
-        # indices = np.random.choice(X_african.shape[0], 75, replace=False)
-        # X_african=X_african[indices]
+        if self.MaAVOA_p1!=1:
+            indices = np.random.choice(X_african_all.shape[0], round(X_african_all.shape[0] * self.MaAVOA_p1),
+                                       replace=False)
+            X_african = X_african_all[indices]
+        else:
+            X_african = X_african_all
+
 
         p1 = 0.6
         p2 = 0.4
@@ -250,7 +253,8 @@ class MaAVOA(Algorithm):
         parents = selection.do(ARC_unsorted, n_select, crossover.n_parents)
         ARC_off = crossover.do(self.problem, ARC_unsorted, parents)
         ARC_off = mutation.do(self.problem, ARC_off)
-        self.evaluator.eval(self.problem, ARC_off)
+        ev=copy.deepcopy( self.evaluator)
+        ev.eval(self.problem, ARC_off)
 
         ARC_unsorted = Population.merge(ARC_unsorted, ARC_off)
         survival1 = ReferenceDirectionSurvival(self.ref_dirs)
