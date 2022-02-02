@@ -94,10 +94,10 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
             np.savetxt(os.path.join(dir, "PF_new.csv"), PF, delimiter=",")
             if n_obj <= 5:
                 get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
-                    os.path.join(dir, 'result.png'))
+                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
 
             v= get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey",alpha=0.3)
-            v.add(F,label="Result",color="blue").save(os.path.join(dir, 'pcp.png'))
+            v.add(F,label="Result",color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
 
         with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
             pickle.dump(res, file)
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     termination = get_termination("n_eval", 100000) # run 2
     # termination = get_termination("n_gen", 500) # run 1
     # termination = get_termination("time", "00:00:30")  # run 3
-
+    i=0
     for runId in [22]:
         for n_obj in [3,5,8,10,15]:
             for pID in [1,2,3,4,5,6,7]:  # dtlz
@@ -152,9 +152,11 @@ if __name__ == '__main__':
                     maindir = r'D:\My Research Results\Many_Objectives'
                     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
                     dir = os.path.join(maindir, '{}\\run_{}\\result_object.pkl'.format(problemfullname, runId))
+                    i = i + 1
                     if os.path.exists(dir):
-                        print("{}  done".format(problemfullname))
+                        print("{}- {}  done".format(i,problemfullname))
                         continue
+
 
                     setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,
                                    saveResults=True)

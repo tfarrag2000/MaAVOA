@@ -13,7 +13,7 @@ for probname in os.listdir(dir):
     if os.path.isdir(probdir):
         for runname in os.listdir(probdir):
             # print(probname,runname)
-            if runname != "run_1" and  runname != "run_11" :
+            if runname != "run_2" and  runname != "run_22" :
                 continue
 
             rundir = os.path.join(probdir, runname)
@@ -30,24 +30,15 @@ for probname in os.listdir(dir):
 
                 PF_filepath = os.path.join(rundir, "PF_new.csv")
                 PF = np.genfromtxt(PF_filepath, delimiter=',')
-
-
                 metric = IGD(PF, zero_to_one=True)
                 F_list= [h.opt.get("F") for h in res.history]
                 n_evals = np.array([e.evaluator.n_eval for e in res.history])
                 igd_list = np.array([metric.do(_F) for _F in     F_list])
                 np.savetxt(os.path.join(rundir, "history_igd_list.csv"), igd_list, delimiter=",")
                 np.savetxt(os.path.join(rundir, "history_n_evals.csv"), n_evals, delimiter=",")
-                n_gen=range(1,len(igd_list)+1)
 
-                plt.plot(n_gen, igd_list, color='black', lw=0.7, label="Avg. CV of Pop")
-                # plt.scatter(runs, igd_list, facecolor="none", edgecolor='black', marker="p")
-                # plt.axhline(10 ** -2, color="red", label="10^-2", linestyle="--")
-                plt.title("Convergence")
-                plt.xlabel("no. of iterations")
-                plt.ylabel("IGD")
-                plt.yscale("log")
-                plt.legend()
-                plt.savefig(os.path.join(rundir, "conv.png"))
-                plt.cla()
-                plt.clf()
+                # plt.plot(n_gen, igd_list, color='black', lw=0.7, label="Avg. CV of Pop")
+                # # plt.scatter(runs, igd_list, facecolor="none", edgecolor='black', marker="p")
+                # # plt.axhline(10 ** -2, color="red", label="10^-2", linestyle="--")
+                # plt.title("Convergence")
+                # plt.xlabel("no. of iterations")

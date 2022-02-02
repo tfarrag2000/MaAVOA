@@ -51,46 +51,39 @@
 #                 # plt.savefig(os.path.join(rundir, "conv.png"))
 #                 # plt.cla()
 #                 # plt.clf()
+import os
+
+import numpy as np
+from matplotlib import pyplot as plt
+
+ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),("ctaea", "CTAEA")]
 
 
+for n_obj in [3,10]:
+    for pID in [1, 2, 3, 4, 5, 6, 7]:
+        for alg, Name in ALGORITHMS:
+            problem_name = "dtlz{}".format(pID)
+            maindir = r'D:\My Research Results\Many_Objectives'
+            problemfullname = '{}_obj{}_{}'.format(problem_name, n_obj, alg)
+            print(problemfullname)
+            rundir = os.path.join(maindir, '{}\\run_22'.format(problemfullname))
 
+            if not os.path.exists(os.path.join(rundir, "history_igd_list.csv")):
+                continue
 
+            igd_list = np.genfromtxt(os.path.join(rundir, "history_igd_list.csv"), delimiter=',')
+            n_evals = np.genfromtxt(os.path.join(rundir, "history_n_evals.csv"), delimiter=',')
+            n_gen = range(1, len(igd_list) + 1)
 
-# import os
-#
-# import numpy as np
-# from matplotlib import pyplot as plt
-#
-# ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),("ctaea", "CTAEA")]
-#
-# for runid in [1,2,11,22,3,33]:
-#     for n_obj in [10,15]:
-#         for pID in [1, 2, 3, 4, 5, 6, 7]:
-#             for alg, Name in ALGORITHMS:
-#                 problem_name = "dtlz{}".format(pID)
-#                 maindir = r'D:\My Research Results\Many_Objectives'
-#                 problemfullname = '{}_obj{}_{}'.format(problem_name, n_obj, alg)
-#                 print(problemfullname)
-#                 rundir = os.path.join(maindir, '{}\\run_{}'.format(problemfullname,runid))
-#
-#                 file1 =os.path.join(rundir, "F_new.csv")
-#                 if os.path.exists(file1):
-#                     F = np.genfromtxt(file1, delimiter=',')
-#
-#                     for f in F:
-#                         plt.plot(range(1,F.shape[1]+1), f,color='blue', lw=1, label=Name)
-#                         plt.xticks(np.arange(1, F.shape[1]+1))
-#                         plt.xlim([1, F.shape[1]])
-#
-#                         # plt.scatter(runs, igd_list, facecolor="none", edgecolor='black', marker="p")
-#                         # plt.axhline(10 ** -2, color="red", label="10^-2", linestyle="--")
-#                         # plt. ntitle("Convergence")
-#                         plt.xlabel("Objective No.")
-#                         plt.ylabel("Value")
-#                         # plt.yscale("log")
-#                     # plt.legend()
-#                     plt.savefig(os.path.join(rundir, "{}_F_run_{}.png".format(problemfullname,runid)))
-#                     plt.cla()
-#                     plt.clf()
-#
-#
+            plt.plot(n_evals, igd_list, lw=1, label=Name)
+            # plt.scatter(runs, igd_list, facecolor="none", edgecolor='black', marker="p")
+            # plt.axhline(10 ** -2, color="red", label="10^-2", linestyle="--")
+            plt.title("Convergence")
+            plt.xlabel("Function Evaluations")
+            plt.ylabel("IGD")
+            plt.yscale("log")
+        plt.legend()
+        problemfullname = '{}_obj{}'.format(problem_name, n_obj)
+        plt.savefig(os.path.join(maindir, "{}_nevals_conv.png".format(problemfullname)))
+        plt.cla()
+        plt.clf()
