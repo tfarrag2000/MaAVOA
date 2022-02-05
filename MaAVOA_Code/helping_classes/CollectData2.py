@@ -23,13 +23,18 @@ with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
         for n_obj in [3,5,8,10,15]:
                 for pID in [1, 2, 3, 4, 5, 6, 7]:
                     for runID in runsgroub:
+
                         fullrundata="run_{},".format(runID)
                         for alg, Name in ALGORITHMS:
                             problemfullname = 'dtlz{}_obj{}_{}'.format(pID, n_obj, alg)
                             probdir = os.path.join(dir, problemfullname)
                             rundir = os.path.join(probdir, "run_{}".format(runID))
                             resultfilepath= os.path.join(rundir, "final_result_run.csv")
-
+                            # if runID != 11:
+                            #     file =os.path.join(rundir, "result_object.pkl")
+                            #     if os.path.exists(file):
+                            #         os.remove(file)
+                            # continue
                             if os.path.exists(resultfilepath):
                                 with open(resultfilepath, 'r') as file:
                                     file.readline()  # title

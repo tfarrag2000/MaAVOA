@@ -57,16 +57,17 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),("ctaea", "CTAEA")]
+# ALGORITHMS = [("MaAVOA_70_90", "MaAVOA")]
 
 
-for n_obj in [3,10]:
-    for pID in [1, 2, 3, 4, 5, 6, 7]:
+for n_obj in [10]:
+    for pID in [ 4]:
         for alg, Name in ALGORITHMS:
             problem_name = "dtlz{}".format(pID)
             maindir = r'D:\My Research Results\Many_Objectives'
             problemfullname = '{}_obj{}_{}'.format(problem_name, n_obj, alg)
             print(problemfullname)
-            rundir = os.path.join(maindir, '{}\\run_22'.format(problemfullname))
+            rundir = os.path.join(maindir, '{}\\run_11'.format(problemfullname))
 
             if not os.path.exists(os.path.join(rundir, "history_igd_list.csv")):
                 continue
@@ -75,15 +76,15 @@ for n_obj in [3,10]:
             n_evals = np.genfromtxt(os.path.join(rundir, "history_n_evals.csv"), delimiter=',')
             n_gen = range(1, len(igd_list) + 1)
 
-            plt.plot(n_evals, igd_list, lw=1, label=Name)
+            plt.plot(n_gen, igd_list, lw=1, label=Name)
             # plt.scatter(runs, igd_list, facecolor="none", edgecolor='black', marker="p")
             # plt.axhline(10 ** -2, color="red", label="10^-2", linestyle="--")
             plt.title("Convergence")
-            plt.xlabel("Function Evaluations")
+            plt.xlabel("no. of iterations")
             plt.ylabel("IGD")
             plt.yscale("log")
         plt.legend()
         problemfullname = '{}_obj{}'.format(problem_name, n_obj)
-        plt.savefig(os.path.join(maindir, "{}_nevals_conv.png".format(problemfullname)))
+        plt.savefig(os.path.join(maindir, "{}_iter_conv.png".format(problemfullname)))
         plt.cla()
         plt.clf()

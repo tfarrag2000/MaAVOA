@@ -14,6 +14,8 @@ from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.optimize import minimize
 import numpy as np
 import matplotlib.pyplot as plt
+
+from EngProblems.EngProb1 import EngProb1
 from MaAVOA_Code.MaAVOA import MaAVOA
 
 
@@ -24,7 +26,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     # n_points = {3: 91, 5: 210, 8: 156, 10: 275, 15:135}
     # ref_dirs = get_reference_directions("energy", Objective_no, n_points[Objective_no], seed=1)
     # reference_direction
-    n_partitions = {3: (16, 0), 5: (6, 0), 8: (3, 2), 10: (3, 2), 15: (2, 1), 20: (2, 1), 30: (2, 1)}
+    n_partitions = {3: (16, 0),4:(16, 0), 5: (6, 0), 8: (3, 2), 10: (3, 2), 15: (2, 1), 20: (2, 1), 30: (2, 1)}
     ref_dirs = None
     p1 = n_partitions[n_obj][0]
     p2 = n_partitions[n_obj][1]
@@ -54,6 +56,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     res = minimize(problem,
                    algorithm,
                    termination,
+                   n_constr=3,
                    # seed=1,
                    verbose=False,
                    save_history=True)
@@ -73,14 +76,12 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         igd = IGD(PF, zero_to_one=True).do(F)
         gd = GD(PF, zero_to_one=True).do(F)
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
-        HV = 0  # HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
+        HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
     else:
-        pf_dir=os.path.join("D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\PF\PlatEmo", "PF_{}_{}.txt".format(problem.Name,n_obj))
-        PF=np.genfromtxt(pf_dir, delimiter=',')
-        igd = IGD(PF, zero_to_one=True).do(F)
-        gd = GD(PF, zero_to_one=True).do(F)
-        igdplus = IGDPlus(PF, zero_to_one=True).do(F)
-        HV = 0
+        igd = -1
+        gd = -1
+        igdplus = -1
+        HV = -1
 
     if saveResults:
         maindir = r'D:\My Research Results\Many_Objectives'
@@ -102,15 +103,6 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
             pickle.dump(res, file)
 
-        #     n_evals = np.array([e.evaluator.n_eval for e in res.history])
-        #     opt = np.array([e.opt[0].F for e in res.history])
-        #     np.savetxt(os.path.join(dir, "history_n_evals.csv"), n_evals, delimiter=",")
-        #     np.savetxt(os.path.join(dir, "history_opt.csv"), opt, delimiter=",")
-        #
-        #     plt.title("Convergence")
-        #     plt.plot(n_evals, opt, "--")
-        #     plt.yscale("log")
-        #     plt.savefig(os.path.join(dir, 'Convergence.png'))
 
         with open(os.path.join(dir, "final_result_run.csv"), 'w') as file:
             file.write(
@@ -121,42 +113,31 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
                                                                             round(exec_time, 3),
                                                                             igd, gd, igdplus, HV))
         print("done saving to {}".format(dir))
-    print(igd, HV, igdplus)
     print("=" * 100)
-
-    return igd, gd
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), #("moead", MOEAD),
                   ("ctaea", CTAEA)]
     # termination = get_termination("n_eval", 100000) # run 2
-    termination = get_termination("n_gen", 500) # run 1
+    termination = get_termination("n_gen", 500 ) # run 1
     # termination = get_termination("time", "00:00:30")  # run 3
     i=0
-    for runId in [11]:
-        for n_obj in [10]:
-            for pID in [5]:  # dtlz
-                for alg, algorithmClass in ALGORITHMS:
-                    k = 10
-                    if pID == 1:
-                        k = 5
-                    if pID == 7:
-                        k = 20
-                    n_var = n_obj + k - 1
-                    problem_name = "dtlz{}".format(pID)
-                    problem = get_problem(problem_name, n_var=n_var, n_obj=n_obj)
-                    problem.Name = problem_name
-                    problem.AlgorithmName = alg
+    for runId in range(16,17):
+        for alg, algorithmClass in ALGORITHMS:
+            problem_name = "EngP1ob1"
+            problem =EngProb1(m=5)
+            problem.Name = problem_name
+            problem.AlgorithmName = alg
 
-                    maindir = r'D:\My Research Results\Many_Objectives'
-                    problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
-                    dir = os.path.join(maindir, '{}\\run_{}\\result_object.pkl'.format(problemfullname, runId))
-                    i = i + 1
-                    # if os.path.exists(dir):
-                    #     print("{}- {}  done".format(i,problemfullname))
-                    #     continue
+            maindir = r'D:\My Research Results\Many_Objectives'
+            problemfullname = '{}_obj{}_{}'.format(problem.Name, 4, problem.AlgorithmName)
+            dir = os.path.join(maindir, '{}\\run_{}\\result_object.pkl'.format(problemfullname, runId))
+            i = i + 1
+            if os.path.exists(dir):
+                print("{}- {}  done".format(i,problemfullname))
+                continue
 
 
-                    setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,
-                                   saveResults=True)
+            setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=runId,
+                           saveResults=True)

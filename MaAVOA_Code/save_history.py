@@ -3,7 +3,6 @@ import os
 import numpy as np
 import pickle
 
-from matplotlib import pyplot as plt
 from pymoo.indicators.igd import IGD
 
 dir = r'D:\My Research Results\Many_Objectives'
@@ -13,8 +12,9 @@ for probname in os.listdir(dir):
     if os.path.isdir(probdir):
         for runname in os.listdir(probdir):
             # print(probname,runname)
-            if runname != "run_2" and  runname != "run_22" :
+            if runname != "run_111" and  runname != "run_1111"  :
                 continue
+
 
             rundir = os.path.join(probdir, runname)
             dir_pkl = os.path.join(rundir, 'result_object.pkl')
