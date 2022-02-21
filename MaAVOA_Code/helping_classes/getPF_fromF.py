@@ -57,6 +57,11 @@ survival1 = ReferenceDirectionSurvival(ref_dirs)
 xx = survival1.do(p, pop)  # 100 maximum number
 PF = survival1.opt  # PF of the archive
 
+PF_1=PF.get("F")
+# np.savetxt('..\\PF\\PF_EngProb1_4.txt', PF_1, delimiter=',')
+PX_1=PF.get("X")
+# np.savetxt('..\\PF\\PF_X_EngProb1_4.txt', PX_1, delimiter=',')
+print(len(PF_1))
 #
 # fronts, rank = NonDominatedSorting().do(Total_F, return_rank=True)
 # non_dominated, last_front = fronts[0], fronts[-1]

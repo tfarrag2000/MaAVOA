@@ -134,9 +134,9 @@ if __name__ == '__main__':
     termination = get_termination("n_gen", 500) # run 1
     # termination = get_termination("time", "00:00:30")  # run 3
     i=0
-    for runId in [11]:
-        for n_obj in [10]:
-            for pID in [5]:  # dtlz
+    for runId in [1,2,3,4,5]:
+        for n_obj in [3,10]:
+            for pID in [1,2,3,4,5,6,7]:  # dtlz
                 for alg, algorithmClass in ALGORITHMS:
                     k = 10
                     if pID == 1:
@@ -153,9 +153,9 @@ if __name__ == '__main__':
                     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
                     dir = os.path.join(maindir, '{}\\run_{}\\result_object.pkl'.format(problemfullname, runId))
                     i = i + 1
-                    # if os.path.exists(dir):
-                    #     print("{}- {}  done".format(i,problemfullname))
-                    #     continue
+                    if os.path.exists(dir):
+                        print("{}- {}  done".format(i,problemfullname))
+                        continue
 
 
                     setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,

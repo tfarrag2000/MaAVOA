@@ -38,7 +38,7 @@ def comp_by_cv_then_random(pop, P, **kwargs):
     return S[:, None].astype(int)
 
 
-class MaAVOA(Algorithm):
+class MaAVOA_Mix(Algorithm):
 
     def __init__(self,
                  ref_dirs,
@@ -70,6 +70,14 @@ class MaAVOA(Algorithm):
             del kwargs['survival']
         else:
             survival = ReferenceDirectionSurvival(ref_dirs)
+
+        if 'crossover' in kwargs:
+            self.crossover = kwargs['crossover']
+            del kwargs['crossover']
+        if 'mutation' in kwargs:
+            self.mutation = kwargs['mutation']
+            del kwargs['mutation']
+
 
         # the population size used
         self.pop_size = pop_size
@@ -135,6 +143,7 @@ class MaAVOA(Algorithm):
             pass
 
     def _infill(self):
+        np.seterr(divide='ignore')
 
         # do the mating using the current population
         ########## create and update the archive
@@ -246,8 +255,8 @@ class MaAVOA(Algorithm):
         ARC_unsorted = Population.merge(self.ARC, FP_iter1)
 
         selection = TournamentSelection(func_comp=comp_by_cv_then_random)
-        crossover = SimulatedBinaryCrossover(eta=30, prob=1.0)
-        mutation = PolynomialMutation(eta=20, prob=None)
+        crossover = self.crossover #SimulatedBinaryCrossover(eta=30, prob=1.0)
+        mutation =self.mutation # PolynomialMutation(eta=20, prob=None)
 
         n_select = math.ceil(len(ARC_unsorted) * self.MaAVOA_p2 / crossover.n_offsprings)
         parents = selection.do(ARC_unsorted, n_select, crossover.n_parents)

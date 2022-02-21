@@ -108,8 +108,8 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
             v = get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey", alpha=0.3)
             v.add(F, label="Result", color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
 
-        with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
-            pickle.dump(res, file)
+        # with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
+        #     pickle.dump(res, file)
 
         with open(os.path.join(dir, "final_result_run.csv"), 'w') as file:
             file.write(
@@ -125,7 +125,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
+    ALGORITHMS = [("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
                   ("ctaea", CTAEA)]
     # ALGORITHMS = [("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
     #               ("ctaea", CTAEA)]
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     # termination = get_termination("time", "00:00:30")  # run 3
 
     i = 0
-    for runId in [ 1000]:
+    for runId in [250, 500, 1000, 2000, 4000, 5000, 8000, 10000, 15000, 20000]:
         for alg, algorithmClass in ALGORITHMS:
             termination = get_termination("n_gen", runId)  # run 1
             problem_name = "EngProb1"
@@ -148,7 +148,6 @@ if __name__ == '__main__':
             i = i + 1
             if os.path.exists(dir):
                 print("{}- {} -- run id:{} done".format(i, problemfullname,runId))
-                # continue
+                continue
 
-            setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=runId,
-                           saveResults=True)
+            setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=runId,saveResults=True)

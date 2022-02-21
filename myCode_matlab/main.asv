@@ -1,0 +1,40 @@
+% clear
+% % platemo('algorithm',@NSGAIII,'problem',@DTLZ1,'M',8,'D',12,'maxFE',78000,'N',156);
+% for n_obj = [3,5,8,10,15]
+%     k = 20;
+%     n_var = n_obj + k - 1;
+%     pro = DTLZ7('M',n_obj,'N',156,'D',n_var);
+%     PF=pro.optimum;
+%     dir="D:\PF_dtlz7_"+ n_obj+".txt"
+%     writematrix(PF,dir)
+% end
+clear
+problist=["dtlz1","dtlz2","dtlz3","dtlz4","dtlz5","dtlz6","dtlz7"];
+dirPF="D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\PF\PlatEmo";
+
+listExp=GetSubDirsFirstLevelOnly("D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\results");
+
+for dir =listExp
+    for i =[1,2,3,4]
+      disp(dir)
+      pat = digitsPattern;
+      onlyNumbers = extract(dir, pat) ;
+      F_dir="D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\results"+"\"+dir+"\"+"run_"+i+"\F_new.csv";
+      PF_dir1=dirPF+"\PF_dtlz"+onlyNumbers(1) +"_"+onlyNumbers(2)+".txt";
+      metrics_dir="D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\results"+"\"+dir+"\"+"run_"+i+"\metrics.csv";
+      if isfile(F_dir) 
+          if isfile(metrics_dir) 
+              disp("done")            
+          else
+              p = table2array(readtable(F_dir));
+              optimum = table2array(readtable(PF_dir1));
+              hv1=HV_new(p,optimum);
+              igd1=IGD_new(p,optimum);
+              gd1=GD_new(p,optimum);
+              fid=fopen(metrics_dir,'w');
+              fprintf(fid, "IGD ,GD ,igdplus ,HV\n");
+              fprintf(fid, igd1+ " ,"+gd1+ " ,0 ,"+hv1+"\n");
+          end
+      end
+    end
+end
