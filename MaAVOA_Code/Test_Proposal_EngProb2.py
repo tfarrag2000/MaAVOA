@@ -128,7 +128,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
-                  ("ctaea", CTAEA), ("RVEA", RVEA), ("RNSGA3", RNSGA3), ("AGEMOEA", AGEMOEA)]
+                  ("ctaea", CTAEA), ("AGEMOEA", AGEMOEA), ("RVEA", RVEA)]
 
     # termination = get_termination("time", "00:00:30")
     # termination = get_termination("n_eval", 100000)
