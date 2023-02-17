@@ -6,8 +6,13 @@ from pymoo.algorithms.moo.ctaea import CTAEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.unsga3 import UNSGA3
+from pymoo.algorithms.moo.rvea import RVEA
+from pymoo.algorithms.moo.rnsga3 import RNSGA3
+from pymoo.algorithms.moo.age import AGEMOEA
 
-from pymoo.factory import get_reference_directions, get_visualization, get_problem, get_termination
+from pymoo.problems import get_problem
+from pymoo.util.ref_dirs import get_reference_directions
+from pymoo.termination import get_termination
 from pymoo.indicators.gd import GD
 from pymoo.indicators.hv import Hypervolume
 from pymoo.indicators.igd import IGD
@@ -15,10 +20,13 @@ from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.optimize import minimize
 import numpy as np
 import matplotlib.pyplot as plt
-from MaAVOA_Code.MaAVOA import MaAVOA
+# from MaAVOA_Code.MaAVOA import MaAVOA
+from pymoo.visualization.scatter import Scatter
+from pymoo.visualization.pcp import PCP
 
 
-def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True,maindir=None):
+def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True,
+                   maindir=None):
     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
     print(problemfullname + " run_{}".format(runID))
 
@@ -35,10 +43,8 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     if p2 != 0:
         ref_dirs_L2 = get_reference_directions("das-dennis", n_dim=n_obj, n_partitions=p2)
         ref_dirs = np.concatenate((ref_dirs, ref_dirs_L2))
-
     if pop_size == None:
         pop_size = len(ref_dirs)
-
 
     # np.savetxt('ref_dirs_{}.txt'.format(Objective_no,len(ref_dirs)), ref_dirs, delimiter=',')
     # np.savetxt('PF_{}_{}.txt'.format(problem.Name,n_obj), PF, delimiter=',')
@@ -49,15 +55,9 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     # init_pop = initialization.do(problem, pop_size)
 
     algorithm = algorithmClass(ref_dirs=ref_dirs)
-    # algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
 
     start_time = time.time()
-    res = minimize(problem,
-                   algorithm,
-                   termination,
-                   # seed=1,
-                   verbose=False,
-                   save_history=True)
+    res = minimize(problem, algorithm, termination, verbose=False, save_history=True)  # seed=1,
 
     exec_time = time.time() - start_time
     # find the pareto_front of the combined results
@@ -68,7 +68,12 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
     print("done optimization")
 
-    PF = problem.pareto_front(ref_dirs)
+    PF=None
+    try:
+        PF = problem.pareto_front(ref_dirs)
+    except:
+        print("Erooooooooooor")
+
 
     if PF is not None:
         igd = IGD(PF, zero_to_one=True).do(F)
@@ -76,16 +81,15 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
         HV = 0  # HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
     else:
-        pf_dir=os.path.join("D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\PF\PlatEmo", "PF_{}_{}.txt".format(problem.Name,n_obj))
-        PF=np.genfromtxt(pf_dir, delimiter=',')
+        pf_dir = os.path.join(".\PF\PlatEmo",
+                              "PF_{}_{}.txt".format(problem.Name, n_obj))
+        PF = np.genfromtxt(pf_dir, delimiter=',')
         igd = IGD(PF, zero_to_one=True).do(F)
         gd = GD(PF, zero_to_one=True).do(F)
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
         HV = 0
 
-
     if saveResults:
-
         dir = os.path.join(maindir, '{}\\run_{}\\'.format(problemfullname, runID))
         os.makedirs(dir, exist_ok=True)
 
@@ -94,11 +98,17 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         if PF is not None:
             np.savetxt(os.path.join(dir, "PF_new.csv"), PF, delimiter=",")
             if n_obj <= 5:
-                get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
-                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
+                v=Scatter().add(PF, label="Pareto-front").add(F, label="Result")
+                v.save(os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
 
-            v= get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey",alpha=0.3)
-            v.add(F,label="Result",color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
+                # get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
+                #     os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
+
+            v=PCP().add(PF, label="Pareto-front", color="grey", alpha=0.3).add(F, label="Result", color="blue")
+            v.save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
+
+            # v = get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey", alpha=0.3)
+            # v.save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
 
         with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
             pickle.dump(res, file)
@@ -129,15 +139,20 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
-                  ("ctaea", CTAEA)]
+    # ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
+    #               ("ctaea", CTAEA)]
+
+    ALGORITHMS = [("RVEA", RVEA), ("RNSGA3", RNSGA3), ("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [("RVEA", RVEA), ("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [ ("AGEMOEA", AGEMOEA)]
+
     # termination = get_termination("n_eval", 100000) # run 2
     # termination = get_termination("n_gen", 500) # run 1
     termination = get_termination("time", "00:00:30")  # run 3
-    i=0
-    for runId in [33]:
-        for n_obj in [3,5,8,10,15]:
-            for pID in [1,2,3,4,5,6,7]:  # dtlz
+    i = 0
+    for runId in [3]:
+        for n_obj in [3, 5, 8, 10, 15]:
+            for pID in [ 1, 2, 3, 4,5, 6, 7]:  # dtlz
                 for alg, algorithmClass in ALGORITHMS:
                     k = 10
                     if pID == 1:
@@ -157,7 +172,7 @@ if __name__ == '__main__':
                     dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, runId))
                     i = i + 1
                     if os.path.exists(dir):
-                        print("{}- {}  done".format(i,problemfullname))
+                        print("{}- {}  done".format(i, problemfullname))
                         continue
                     setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,
-                                   saveResults=True,maindir=maindir)
+                                   saveResults=True, maindir=maindir)

@@ -20,7 +20,7 @@ i=0
 Total_X=None
 for runId in range(1,16):
     for alg, algorithmClass in ALGORITHMS:
-        problem_name = "EngP1ob1"
+        problem_name = "EngProb1"
         maindir = r'D:\My Research Results\Many_Objectives'
         problemfullname = '{}_obj{}_{}'.format(problem_name, 4, alg)
         file = os.path.join(maindir, '{}\\run_{}\\X_new.csv'.format(problemfullname, runId))

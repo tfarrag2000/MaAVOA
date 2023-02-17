@@ -94,3 +94,16 @@
 #                     plt.clf()
 #
 #
+import os
+
+dir='D:\My Research Results\Many_Objectives'
+for probname in os.listdir(dir):
+    probdir = os.path.join(dir, probname)
+    if os.path.isdir(probdir):
+        for runname in os.listdir(probdir):
+            # print(probname,runname)
+            if runname == "run_2":
+                rundir = os.path.join(probdir, runname)
+                rundir2 = os.path.join(probdir, "run_12")
+                os.rename(rundir,rundir2)
+                print(rundir)

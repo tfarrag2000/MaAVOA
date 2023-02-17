@@ -5,6 +5,9 @@ import numpy as np
 from pymoo.algorithms.moo.ctaea import CTAEA
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.unsga3 import UNSGA3
+from pymoo.algorithms.moo.rvea import RVEA
+from pymoo.algorithms.moo.rnsga3 import RNSGA3
+from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.factory import get_reference_directions, get_visualization, get_termination, get_sampling, get_crossover, \
     get_mutation
 from pymoo.indicators.gd import GD
@@ -14,13 +17,13 @@ from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.operators.mixed_variable_operator import MixedVariableSampling, MixedVariableMutation, MixedVariableCrossover
 from pymoo.optimize import minimize
 
-from EngProblems.EngProb1 import EngProb1
+from EngProblems.EngProb2 import EngProb2
 from MaAVOA_Code.MaAVOA_Mix import MaAVOA_Mix
 
 
 def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True):
     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
-    print(problemfullname +" run id: {}".format(runID))
+    print(problemfullname + " run id: {}".format(runID))
 
     # n_points = {3: 91, 5: 210, 8: 156, 10: 275, 15:135}
     # ref_dirs = get_reference_directions("energy", Objective_no, n_points[Objective_no], seed=1)
@@ -45,7 +48,8 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     if termination == None:
         termination = get_termination("n_eval", 100000)
     # init_pop = initialization.do(problem, pop_size)
-    mask = ["real", "real", "real", "real", "real", "int", "int", "int", "int", "int"]
+    mask = ["real", "real", "real", "real", "int", "int", "int", "int"]
+
     sampling = MixedVariableSampling(mask, {"real": get_sampling("real_random"), "int": get_sampling("int_random")})
     crossover = MixedVariableCrossover(mask, {
         "real": get_crossover("real_sbx", prob=1.0, eta=3.0),
@@ -77,7 +81,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     n_eval = res.algorithm.evaluator.n_eval
 
     print("done optimization")
-    PF = np.genfromtxt("D:\\OneDrive\\My Research\\Many_Objectives\\The Code\\MaAVOA_Code\\PF\\PF_EngProb1_4.txt",
+    PF = np.genfromtxt(".\\PF\\PF_EngProb1_4.txt",
                        delimiter=',')
 
     HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
@@ -92,8 +96,6 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         igdplus = -1
 
     if saveResults:
-        maindir = r'D:\My Research Results\Many_Objectives\EngProblem1'
-
         dir = os.path.join(maindir, '{}\\run_{}\\'.format(problemfullname, runID))
         os.makedirs(dir, exist_ok=True)
 
@@ -126,29 +128,29 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
-                  ("ctaea", CTAEA)]
-    # ALGORITHMS = [("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
-    #               ("ctaea", CTAEA)]
-    # ALGORITHMS = [("MaAVOA_70_90", MaAVOA)]
-    # termination = get_termination("n_eval", 100000) # run 2
-    termination = get_termination("n_gen", 500)  # run 1
-    # termination = get_termination("time", "00:00:30")  # run 3
+                  ("ctaea", CTAEA), ("RVEA", RVEA), ("RNSGA3", RNSGA3), ("AGEMOEA", AGEMOEA)]
+
+    # termination = get_termination("time", "00:00:30")
+    # termination = get_termination("n_eval", 100000)
 
     i = 0
-    for runId in [ 1000]:
+    for n_gen in [250, 500, 1000,2000,4000,5000,10000]:
         for alg, algorithmClass in ALGORITHMS:
-            termination = get_termination("n_gen", runId)  # run 1
-            problem_name = "EngProb1"
-            problem = EngProb1()
-            problem.Name = problem_name
-            problem.AlgorithmName = alg
-            maindir = r'D:\My Research Results\Many_Objectives\EngProblem1'
-            problemfullname = '{}_obj{}_{}'.format(problem.Name, 4, problem.AlgorithmName)
-            dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, runId))
-            i = i + 1
-            if os.path.exists(dir):
-                print("{}- {} -- run id:{} done".format(i, problemfullname,runId))
-                # continue
+            try:
+                termination = get_termination("n_gen", n_gen)
+                problem_name = "EngProb2"
+                problem = EngProb2()
+                problem.Name = problem_name
+                problem.AlgorithmName = alg
+                maindir = r'D:\My Research Results\Many_Objectives\EngProblem2'
+                problemfullname = '{}_obj{}_{}'.format(problem.Name, 4, problem.AlgorithmName)
+                dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, n_gen))
+                i = i + 1
+                if os.path.exists(dir):
+                    print("{}- {} -- run id:{} done".format(i, problemfullname, n_gen))
+                    continue
 
-            setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=runId,
-                           saveResults=True)
+                setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=n_gen,
+                               saveResults=True)
+            except Exception as e:
+                print("{}- {} -- run id:{} Erroooor:{}".format(i, problemfullname, n_gen, e))

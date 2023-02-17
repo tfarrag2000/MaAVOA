@@ -1,31 +1,39 @@
 import os
+import time
 import pickle
-
 import numpy as np
 from pymoo.algorithms.moo.ctaea import CTAEA
+from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.unsga3 import UNSGA3
-from pymoo.factory import get_reference_directions, get_visualization, get_termination, get_sampling, get_crossover, \
-    get_mutation
+from pymoo.algorithms.moo.rvea import RVEA
+from pymoo.algorithms.moo.rnsga3 import RNSGA3
+from pymoo.algorithms.moo.age import AGEMOEA
+
+from pymoo.problems import get_problem
+from pymoo.util.ref_dirs import get_reference_directions
+from pymoo.termination import get_termination
 from pymoo.indicators.gd import GD
 from pymoo.indicators.hv import Hypervolume
 from pymoo.indicators.igd import IGD
 from pymoo.indicators.igd_plus import IGDPlus
-from pymoo.operators.mixed_variable_operator import MixedVariableSampling, MixedVariableMutation, MixedVariableCrossover
 from pymoo.optimize import minimize
+import numpy as np
+import matplotlib.pyplot as plt
+# from MaAVOA_Code.MaAVOA import MaAVOA
+from pymoo.visualization.scatter import Scatter
+from pymoo.visualization.pcp import PCP
 
-from EngProblems.EngProb1 import EngProb1
-from MaAVOA_Code.MaAVOA_Mix import MaAVOA_Mix
 
-
-def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True):
+def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True,
+                   maindir=None):
     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
-    print(problemfullname +" run id: {}".format(runID))
+    print(problemfullname + " run_{}".format(runID))
 
     # n_points = {3: 91, 5: 210, 8: 156, 10: 275, 15:135}
     # ref_dirs = get_reference_directions("energy", Objective_no, n_points[Objective_no], seed=1)
     # reference_direction
-    n_partitions = {3: (16, 0), 4: (16, 0), 5: (6, 0), 8: (3, 2), 10: (3, 2), 15: (2, 1), 20: (2, 1), 30: (2, 1)}
+    n_partitions = {3: (16, 0), 5: (6, 0), 8: (3, 2), 10: (3, 2), 15: (2, 1), 20: (2, 1), 30: (2, 1)}
     ref_dirs = None
     p1 = n_partitions[n_obj][0]
     p2 = n_partitions[n_obj][1]
@@ -35,7 +43,6 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     if p2 != 0:
         ref_dirs_L2 = get_reference_directions("das-dennis", n_dim=n_obj, n_partitions=p2)
         ref_dirs = np.concatenate((ref_dirs, ref_dirs_L2))
-
     if pop_size == None:
         pop_size = len(ref_dirs)
 
@@ -44,32 +51,15 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
     if termination == None:
         termination = get_termination("n_eval", 100000)
+    # initialization = Initialization(FloatRandomSampling())
     # init_pop = initialization.do(problem, pop_size)
-    mask = ["real", "real", "real", "real", "real", "int", "int", "int", "int", "int"]
-    sampling = MixedVariableSampling(mask, {"real": get_sampling("real_random"), "int": get_sampling("int_random")})
-    crossover = MixedVariableCrossover(mask, {
-        "real": get_crossover("real_sbx", prob=1.0, eta=3.0),
-        "int": get_crossover("int_sbx", prob=1.0, eta=3.0)
-    })
 
-    mutation = MixedVariableMutation(mask, {
-        "real": get_mutation("real_pm", eta=3.0),
-        "int": get_mutation("int_pm", eta=3.0)
-    })
-    algorithm = algorithmClass(ref_dirs=ref_dirs, sampling=sampling,
-                               crossover=crossover,
-                               mutation=mutation,
-                               eliminate_duplicates=True)
-    # algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
+    algorithm = algorithmClass(ref_dirs=ref_dirs)
 
-    res = minimize(problem,
-                   algorithm,
-                   termination,
-                   n_constr=3,
-                   # seed=1,
-                   verbose=False,
-                   save_history=False)
+    start_time = time.time()
+    res = minimize(problem, algorithm, termination, verbose=False, save_history=True)  # seed=1,
 
+    exec_time = time.time() - start_time
     # find the pareto_front of the combined results
     F = res.opt.get("F")
     X = res.opt.get("X")
@@ -77,23 +67,29 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     n_eval = res.algorithm.evaluator.n_eval
 
     print("done optimization")
-    PF = np.genfromtxt("D:\\OneDrive\\My Research\\Many_Objectives\\The Code\\MaAVOA_Code\\PF\\PF_EngProb1_4.txt",
-                       delimiter=',')
 
-    HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
+    PF=None
+    try:
+        PF = problem.pareto_front(ref_dirs)
+    except:
+        print("Erooooooooooor")
+
 
     if PF is not None:
         igd = IGD(PF, zero_to_one=True).do(F)
         gd = GD(PF, zero_to_one=True).do(F)
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
+        HV = 0  # HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
     else:
-        igd = -1
-        gd = -1
-        igdplus = -1
+        pf_dir = os.path.join(".\PF\PlatEmo",
+                              "PF_{}_{}.txt".format(problem.Name, n_obj))
+        PF = np.genfromtxt(pf_dir, delimiter=',')
+        igd = IGD(PF, zero_to_one=True).do(F)
+        gd = GD(PF, zero_to_one=True).do(F)
+        igdplus = IGDPlus(PF, zero_to_one=True).do(F)
+        HV = 0
 
     if saveResults:
-        maindir = r'D:\My Research Results\Many_Objectives\EngProblem1'
-
         dir = os.path.join(maindir, '{}\\run_{}\\'.format(problemfullname, runID))
         os.makedirs(dir, exist_ok=True)
 
@@ -102,14 +98,30 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         if PF is not None:
             np.savetxt(os.path.join(dir, "PF_new.csv"), PF, delimiter=",")
             if n_obj <= 5:
-                get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
-                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
+                v=Scatter().add(PF, label="Pareto-front").add(F, label="Result")
+                v.save(os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
 
-            v = get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey", alpha=0.3)
-            v.add(F, label="Result", color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
+                # get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
+                #     os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
 
-        # with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
-        #     pickle.dump(res, file)
+            v=PCP().add(PF, label="Pareto-front", color="grey", alpha=0.3).add(F, label="Result", color="blue")
+            v.save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
+
+            # v = get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey", alpha=0.3)
+            # v.save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
+
+        with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
+            pickle.dump(res, file)
+
+        #     n_evals = np.array([e.evaluator.n_eval for e in res.history])
+        #     opt = np.array([e.opt[0].F for e in res.history])
+        #     np.savetxt(os.path.join(dir, "history_n_evals.csv"), n_evals, delimiter=",")
+        #     np.savetxt(os.path.join(dir, "history_opt.csv"), opt, delimiter=",")
+        #
+        #     plt.title("Convergence")
+        #     plt.plot(n_evals, opt, "--")
+        #     plt.yscale("log")
+        #     plt.savefig(os.path.join(dir, 'Convergence.png'))
 
         with open(os.path.join(dir, "final_result_run.csv"), 'w') as file:
             file.write(
@@ -117,37 +129,49 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
             file.write("{}, {}, {}, {}, {}, {}, {}, {}, {}, {},{}\n".format(problem.Name,
                                                                             n_obj, problem.AlgorithmName,
                                                                             n_gen, n_eval, res.pop.shape[0],
-                                                                            round(res.exec_time, 3),
+                                                                            round(exec_time, 3),
                                                                             igd, gd, igdplus, HV))
         print("done saving to {}".format(dir))
-    print("Pareto Front len :{}".format(len(F)))
+    print(igd, HV, igdplus)
     print("=" * 100)
+
+    return igd, gd
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
-                  ("ctaea", CTAEA)]
-    # ALGORITHMS = [("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
+    # ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
     #               ("ctaea", CTAEA)]
-    # ALGORITHMS = [("MaAVOA_70_90", MaAVOA)]
-    # termination = get_termination("n_eval", 100000) # run 2
-    termination = get_termination("n_gen", 500)  # run 1
+
+    ALGORITHMS = [("RVEA", RVEA), ("RNSGA3", RNSGA3), ("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [("RVEA", RVEA), ("AGEMOEA", AGEMOEA)]
+
+    termination = get_termination("n_eval", 100000) # run 2
+    # termination = get_termination("n_gen", 500) # run 1
     # termination = get_termination("time", "00:00:30")  # run 3
-
     i = 0
-    for runId in [250, 500, 1000, 2000, 4000, 5000, 8000, 10000, 15000, 20000]:
-        for alg, algorithmClass in ALGORITHMS:
-            termination = get_termination("n_gen", runId)  # run 1
-            problem_name = "EngProb1"
-            problem = EngProb1()
-            problem.Name = problem_name
-            problem.AlgorithmName = alg
-            maindir = r'D:\My Research Results\Many_Objectives\EngProblem1'
-            problemfullname = '{}_obj{}_{}'.format(problem.Name, 4, problem.AlgorithmName)
-            dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, runId))
-            i = i + 1
-            if os.path.exists(dir):
-                print("{}- {} -- run id:{} done".format(i, problemfullname,runId))
-                continue
+    for runId in [2]:
+        for n_obj in [3, 5, 8, 10, 15]:
+            for pID in [ 1, 2, 3, 4,5, 6, 7]:  # dtlz
+                for alg, algorithmClass in ALGORITHMS:
+                    k = 10
+                    if pID == 1:
+                        k = 5
+                    if pID == 7:
+                        k = 20
+                    n_var = n_obj + k - 1
+                    problem_name = "dtlz{}".format(pID)
+                    problem = get_problem(problem_name, n_var=n_var, n_obj=n_obj)
+                    problem.Name = problem_name
+                    problem.AlgorithmName = alg
 
-            setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=runId,saveResults=True)
+                    maindir = r'C:\Many_Objectives\DTLZ_Problems'
+                    problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
+                    # dir = os.path.join(maindir, '{}\\run_{}\\result_object.pkl'.format(problemfullname, runId))
+
+                    dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, runId))
+                    i = i + 1
+                    if os.path.exists(dir):
+                        print("{}- {}  done".format(i, problemfullname))
+                        continue
+                    setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,
+                                   saveResults=True, maindir=maindir)

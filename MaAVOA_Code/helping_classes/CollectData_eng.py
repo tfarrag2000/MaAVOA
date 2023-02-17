@@ -7,7 +7,7 @@ dir = r'D:\My Research Results\Many_Objectives\EngProblem1'
 import os
 
 with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
-    ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA")]
+    ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA"), ("RVEA", "RVEA"), ("AGEMOEA", "AGEMOEA")]
     # ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA")]
 
     header="problem, Obj_no, AlgorithmName, n_gen, n_eval, pop_size, exec_time,igd, gd,igd_plus, HV,igd, gd,igd_plus, HV"
@@ -16,7 +16,7 @@ with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
         summaryheader=summaryheader+Name+"_"+header+","
     summaryheader=summaryheader[:-1]+"\n"
     filesummary.write(summaryheader)
-    for runsgroub in [[250, 500, 1000, 2000, 4000, 5000, 8000, 10000, 15000, 20000]]:
+    for runsgroub in [[250, 500, 1000, 2000, 4000, 5000, 10000, 15000, 20000]]:
         for runID in runsgroub:
             fullrundata="run_{},".format(runID)
             for alg, Name in ALGORITHMS:
