@@ -128,21 +128,21 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),  # ("moead", MOEAD),
-                  ("ctaea", CTAEA), ("AGEMOEA", AGEMOEA), ("RVEA", RVEA)]
+                  ("ctaea", CTAEA), ("AGEMOEA", AGEMOEA), ("RNSGA3", RNSGA3)]
 
     # termination = get_termination("time", "00:00:30")
     # termination = get_termination("n_eval", 100000)
 
     i = 0
-    for n_gen in [250, 500, 1000,2000,4000,5000,10000]:
-        for alg, algorithmClass in ALGORITHMS:
+    for alg, algorithmClass in ALGORITHMS:
+        for n_gen in [250, 500, 1000,2000,4000,5000,10000]:
             try:
                 termination = get_termination("n_gen", n_gen)
                 problem_name = "EngProb2"
                 problem = EngProb2()
                 problem.Name = problem_name
                 problem.AlgorithmName = alg
-                maindir = r'D:\My Research Results\Many_Objectives\EngProblem2'
+                maindir = r'C:\Many_Objectives\EngProblem2'
                 problemfullname = '{}_obj{}_{}'.format(problem.Name, 4, problem.AlgorithmName)
                 dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, n_gen))
                 i = i + 1
