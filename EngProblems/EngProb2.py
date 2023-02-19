@@ -60,7 +60,7 @@ class EngProb2(Problem):
         for i in range(m):
             f1 = f1 * (1 - (np.power(1 - x[i], x[i + m])))
         # print("f1=", f1)
-        Fit.append(f1)
+        Fit.append(f1 * -1 )    ## -1 to convert max problem to min problem
         for i in range(m):
             f2 = f2 + (w[i] * np.power(v[i], 2) * np.power(x[i + m], 2))
         # print("f2=", f2)

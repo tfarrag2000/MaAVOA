@@ -9,25 +9,27 @@ from pymoo.core.population import Population, pop_from_array_or_individual
 from pymoo.factory import get_termination, get_reference_directions
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
-from EngProblems.EngProb1 import EngProb1
+from EngProblems.EngProb2 import EngProb2
 
-ALGORITHMS = [("MaAVOA_70_90",None), ("nsga3", NSGA3), ("unsga3", UNSGA3), #("moead", MOEAD),
-                  ("ctaea", CTAEA)]
-# termination = get_termination("n_eval", 100000) # run 2
-termination = get_termination("n_gen", 500 ) # run 1
-# termination = get_termination("time", "00:00:30")  # run 3
+ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")]
+maindir = r'C:\Many_Objectives\EngProblem2'
+p=EngProb2()
+problem_name = "EngProb2"
 i=0
 Total_X=None
-for runId in range(1,16):
+
+
+
+for runId in [250, 500, 1000,2000,4000,5000,10000]:
     for alg, algorithmClass in ALGORITHMS:
-        problem_name = "EngProb1"
-        maindir = r'D:\My Research Results\Many_Objectives'
+
         problemfullname = '{}_obj{}_{}'.format(problem_name, 4, alg)
         file = os.path.join(maindir, '{}\\run_{}\\X_new.csv'.format(problemfullname, runId))
         i = i + 1
         if os.path.exists(file):
+            print(file)
             X = np.genfromtxt(file, delimiter=',')
-            X=X.reshape((-1,10))
+            X=X.reshape((-1,8))
             if Total_X is None :
                 Total_X=X
                 continue
@@ -50,7 +52,7 @@ if p2 != 0:
     ref_dirs_L2 = get_reference_directions("das-dennis", n_dim=n_obj, n_partitions=p2)
     ref_dirs = np.concatenate((ref_dirs, ref_dirs_L2))
 
-p=EngProb1()
+
 pop=pop_from_array_or_individual(Total_X)
 Evaluator().eval(p,pop)
 survival1 = ReferenceDirectionSurvival(ref_dirs)
@@ -58,9 +60,9 @@ xx = survival1.do(p, pop)  # 100 maximum number
 PF = survival1.opt  # PF of the archive
 
 PF_1=PF.get("F")
-# np.savetxt('..\\PF\\PF_EngProb1_4.txt', PF_1, delimiter=',')
+np.savetxt('..\\PF\\PF_{}_4.txt'.format(problem_name), PF_1, delimiter=',')
 PX_1=PF.get("X")
-# np.savetxt('..\\PF\\PF_X_EngProb1_4.txt', PX_1, delimiter=',')
+np.savetxt('..\\PF\\PF_X_{}_4.txt'.format(problem_name), PX_1, delimiter=',')
 print(len(PF_1))
 #
 # fronts, rank = NonDominatedSorting().do(Total_F, return_rank=True)

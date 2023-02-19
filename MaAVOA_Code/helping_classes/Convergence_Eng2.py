@@ -6,7 +6,7 @@ import pickle
 from matplotlib import pyplot as plt
 from pymoo.indicators.igd import IGD
 
-dir = r'D:\My Research Results\Many_Objectives\EngProblem1'
+dir = r'C:\Many_Objectives\EngProblem2'
 
 for probname in os.listdir(dir):
     probdir = os.path.join(dir, probname)

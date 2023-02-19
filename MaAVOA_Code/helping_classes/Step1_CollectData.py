@@ -8,7 +8,7 @@ import os
 
 with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
     ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),
-                  ("ctaea", "CTAEA"), ("RVEA", "RVEA"), ("AGEMOEA", "AGEMOEA")]
+                  ("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")] #, ("RVEA", "RVEA")
     header="problem, Obj_no, AlgorithmName, n_gen, n_eval, pop_size, exec_time,igd, gd,igd_plus, HV,igd, gd,igd_plus, HV"
     summaryheader = "runID,"
     for alg, Name in ALGORITHMS:
@@ -16,7 +16,7 @@ with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
     summaryheader=summaryheader[:-1]+"\n"
     filesummary.write(summaryheader)
 
-    for runsgroub in [[11],[21], [31, 32,33]]:#, [21,22,23,24,25], [31, 32]
+    for runsgroub in [[11],[21], [31]]:#, [21,22,23,24,25], [31, 32]
         for n_obj in [3,5,8,10,15]:
                 for pID in [1, 2, 3, 4, 5, 6, 7]:
                     for runID in runsgroub:

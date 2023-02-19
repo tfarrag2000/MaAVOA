@@ -1,24 +1,31 @@
-import os
-import time
-import pickle
+import matplotlib.pyplot as plt
 import numpy as np
+import os
+import pickle
+import time
+from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.ctaea import CTAEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.algorithms.moo.rnsga3 import RNSGA3
+from pymoo.algorithms.moo.rvea import RVEA
 from pymoo.algorithms.moo.unsga3 import UNSGA3
-
-from pymoo.factory import get_reference_directions, get_visualization, get_problem, get_termination
+from pymoo.factory import (
+    get_problem,
+    get_reference_directions,
+    get_termination,
+    get_visualization,
+)
 from pymoo.indicators.gd import GD
 from pymoo.indicators.hv import Hypervolume
 from pymoo.indicators.igd import IGD
 from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.optimize import minimize
-import numpy as np
-import matplotlib.pyplot as plt
+
 from MaAVOA_Code.MaAVOA import MaAVOA
 
 
-def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True,maindir=None):
+def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True, maindir=None):
     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
     print(problemfullname + " run_{}".format(runID))
 
@@ -76,7 +83,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
         HV = 0  # HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
     else:
-        pf_dir=os.path.join("D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\PF\PlatEmo", "PF_{}_{}.txt".format(problem.Name,n_obj))
+        pf_dir=os.path.join(".\PF\PlatEmo", "PF_{}_{}.txt".format(problem.Name,n_obj))
         PF=np.genfromtxt(pf_dir, delimiter=',')
         igd = IGD(PF, zero_to_one=True).do(F)
         gd = GD(PF, zero_to_one=True).do(F)
@@ -130,12 +137,13 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
-                  ("ctaea", CTAEA)]
-    # termination = get_termination("n_eval", 100000) # run 2
-    # termination = get_termination("n_gen", 500) # run 1
-    termination = get_termination("time", "00:00:30")  # run 3
+                  ("ctaea", CTAEA),("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [("AGEMOEA", AGEMOEA)]
+    # termination = get_termination("n_eval", 100000) # run 21
+    # termination = get_termination("n_gen", 500) # run 11
+    termination = get_termination("time", "00:00:30")  # run 31
     i=0
-    for runId in [33]:
+    for runId in [31]:
         for n_obj in [3,5,8,10,15]:
             for pID in [1,2,3,4,5,6,7]:  # dtlz
                 for alg, algorithmClass in ALGORITHMS:
@@ -159,5 +167,5 @@ if __name__ == '__main__':
                     if os.path.exists(dir):
                         print("{}- {}  done".format(i,problemfullname))
                         continue
-                    setupFrameWork(algorithmClass, problem, n_obj, termination=termination, runID=runId,
-                                   saveResults=True,maindir=maindir)
+                    setupFramework(algorithmClass, problem, n_obj, termination=termination, runID=runId,
+                                   saveResults=True, maindir=maindir)

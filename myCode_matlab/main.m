@@ -10,20 +10,21 @@
 % end
 clear
 problist=["dtlz1","dtlz2","dtlz3","dtlz4","dtlz5","dtlz6","dtlz7"];
-dirPF="D:\OneDrive\My Research\Many_Objectives\The Code\MaAVOA_Code\PF\PlatEmo";
+dirPF="..\MaAVOA_Code\PF\PlatEmo";
 
-listExp=GetSubDirsFirstLevelOnly("D:\My Research Results\Many_Objectives");
+listExp=GetSubDirsFirstLevelOnly("C:\Many_Objectives\DTLZ_Problems");
 
 for dir =listExp
     disp(dir);
     for i =1:40
-      F_dir="D:\My Research Results\Many_Objectives"+"\"+dir+"\"+"run_"+i+"\F_new.csv";
+      F_dir="C:\Many_Objectives\DTLZ_Problems"+"\"+dir+"\"+"run_"+i+"\F_new.csv";
       if isfile(F_dir)
           pat = digitsPattern;
           onlyNumbers = extract(dir, pat) ;
           PF_dir1=dirPF+"\PF_dtlz"+onlyNumbers(1) +"_"+onlyNumbers(2)+".txt";
-          metrics_dir="D:\My Research Results\Many_Objectives"+"\"+dir+"\"+"run_"+i+"\metrics.csv";
-          
+          metrics_dir="C:\Many_Objectives\DTLZ_Problems"+"\"+dir+"\"+"run_"+i+"\metrics.csv";
+          disp(metrics_dir);
+
           if isfile(metrics_dir) 
               disp("done")   ;         
           else
@@ -36,6 +37,8 @@ for dir =listExp
               fid=fopen(metrics_dir,'w');
               fprintf(fid, "IGD ,GD ,igdplus ,HV\n");
               fprintf(fid, igd1+ " ,"+gd1+ " ,0 ,"+hv1+"\n");
+              fclose(fid);
+
           end
       end
     end

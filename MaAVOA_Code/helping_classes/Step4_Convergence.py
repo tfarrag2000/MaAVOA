@@ -58,7 +58,7 @@ from pymoo.algorithms.moo.age import AGEMOEA
 import numpy as np
 from matplotlib import pyplot as plt
 
-ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),("ctaea", "CTAEA"),("RVEA", "RVEA"), ("AGEMOEA", "AGEMOEA")]
+ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")]
 runID="run_11"
 
 for n_obj in [3, 5, 8, 10, 15]:

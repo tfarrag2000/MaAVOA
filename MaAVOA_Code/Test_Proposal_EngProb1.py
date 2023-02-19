@@ -18,6 +18,7 @@ from pymoo.algorithms.moo.rnsga3 import RNSGA3
 from pymoo.algorithms.moo.age import AGEMOEA
 from EngProblems.EngProb1 import EngProb1
 from MaAVOA_Code.MaAVOA_Mix import MaAVOA_Mix
+from pymoo.algorithms.moo.moead import MOEAD
 
 
 def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True):
@@ -127,6 +128,7 @@ if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix) ,("nsga3", NSGA3), ("unsga3", UNSGA3),  #, ("RNSGA3", RNSGA3) ("moead", MOEAD),
                   ("ctaea", CTAEA) ,("RVEA", RVEA), ("RNSGA3", RNSGA3), ("AGEMOEA", AGEMOEA)]
     ALGORITHMS = [("RVEA", RVEA), ("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),("ctaea", CTAEA), ("AGEMOEA", AGEMOEA)]
 
     # termination = get_termination("time", "00:00:30")
     # termination = get_termination("n_eval", 100000)
@@ -141,7 +143,7 @@ if __name__ == '__main__':
                 problem = EngProb1()
                 problem.Name = problem_name
                 problem.AlgorithmName = alg
-                maindir = r'D:\My Research Results\Many_Objectives\EngProblem1'
+                maindir = r'C:\Many_Objectives\EngProblem1'
                 problemfullname = '{}_obj{}_{}'.format(problem.Name, 4, problem.AlgorithmName)
                 dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, n_gen))
                 i = i + 1

@@ -2,13 +2,12 @@ import os
 
 import numpy as np
 
-dir = r'D:\My Research Results\Many_Objectives\EngProblem1'
-
+dir = r'C:\Many_Objectives\EngProblem2'
+problem_name='EngProb2'
 import os
 
 with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
-    ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA"), ("RVEA", "RVEA"), ("AGEMOEA", "AGEMOEA")]
-    # ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA")]
+    ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")]
 
     header="problem, Obj_no, AlgorithmName, n_gen, n_eval, pop_size, exec_time,igd, gd,igd_plus, HV,igd, gd,igd_plus, HV"
     summaryheader = "runID,"
@@ -16,11 +15,11 @@ with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
         summaryheader=summaryheader+Name+"_"+header+","
     summaryheader=summaryheader[:-1]+"\n"
     filesummary.write(summaryheader)
-    for runsgroub in [[250, 500, 1000, 2000, 4000, 5000, 10000, 15000, 20000]]:
+    for runsgroub in [[250, 500, 1000, 2000, 4000, 5000, 10000]]:
         for runID in runsgroub:
             fullrundata="run_{},".format(runID)
             for alg, Name in ALGORITHMS:
-                problemfullname = 'EngProb1_obj4_{}'.format(alg)
+                problemfullname = '{}_obj4_{}'.format(problem_name,alg)
                 probdir = os.path.join(dir, problemfullname)
                 rundir = os.path.join(probdir, "run_{}".format(runID))
                 resultfilepath= os.path.join(rundir, "final_result_run.csv")

@@ -9,10 +9,10 @@
 %     writematrix(PF,dir)
 % end
 clear
-dirPF="D:\D:\OneDrive\My Research\02_Finished\Many_Objectives\The Code\MaAVOA_Code\PF\PlatEmo";
+dirPF="..\MaAVOA_Code\PF\PlatEmo";
 
 listExp=GetSubDirsFirstLevelOnly("C:\Many_Objectives\EngProblem2");
-PF_dir1="D:\OneDrive\My Research\02_Finished\Many_Objectives\The Code\MaAVOA_Code\PF\PF_EngProb1_4.txt";
+PF_dir1="..\MaAVOA_Code\PF\PF_EngProb2_4.txt";
 optimum = table2array(readtable(PF_dir1));
 
 for dir =listExp
@@ -35,7 +35,9 @@ for dir =listExp
               fid=fopen(metrics_dir,'w');
               fprintf(fid, "IGD ,GD ,igdplus ,HV\n");
               fprintf(fid, igd1+ " ,"+gd1+ " ,0 ,"+hv1+"\n");
+              fclose(fid);
           end
       end
     end
 end
+

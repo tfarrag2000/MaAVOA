@@ -35,6 +35,8 @@ for dir =listExp
               fid=fopen(metrics_dir,'w');
               fprintf(fid, "IGD ,GD ,igdplus ,HV\n");
               fprintf(fid, igd1+ " ,"+gd1+ " ,0 ,"+hv1+"\n");
+              fclose(fid);
+
           end
       end
     end
