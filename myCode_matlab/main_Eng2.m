@@ -17,7 +17,7 @@ optimum = table2array(readtable(PF_dir1));
 
 for dir =listExp
     disp(dir);
-    for i =1:400000
+    for i =1:10000
       F_dir="c:\Many_Objectives\EngProblem2"+"\"+dir+"\"+"run_"+i+"\F_new.csv";
       if isfile(F_dir)
           pat = digitsPattern;

@@ -136,7 +136,7 @@ if __name__ == '__main__':
     # termination = get_termination("n_eval", 100000)
 
     i = 0
-    for n_gen in [250, 500, 1000,2000,4000,5000,10000]:
+    for n_gen in [5000]:
         for alg, algorithmClass in ALGORITHMS:
             try:
                 termination = get_termination("n_gen", n_gen)
