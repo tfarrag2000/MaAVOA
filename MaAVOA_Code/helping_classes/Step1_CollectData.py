@@ -1,7 +1,3 @@
-import os
-
-import numpy as np
-
 dir = r'C:\Many_Objectives\DTLZ_Problems'
 
 import os

@@ -1,6 +1,5 @@
 import numpy as np
 from pymoo.core.problem import Problem
-from pymoo.operators.sampling.rnd import random_by_bounds
 
 
 class EngProb1(Problem):
@@ -60,7 +59,7 @@ class EngProb1(Problem):
         Fit.append(f2)
         for i in range(m):
             f3 = f3 + (alpha[i] / 100000) * (np.power((-1000 / np.log(x[i])), beta[i])) * (
-                        x[i + m] + np.exp(0.25 * x[i + m]))
+                    x[i + m] + np.exp(0.25 * x[i + m]))
         # print("f3=", f3)
         Fit.append(f3)
 

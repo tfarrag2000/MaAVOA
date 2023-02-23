@@ -1,9 +1,7 @@
 import os
-
-import numpy as np
 import pickle
 
-from matplotlib import pyplot as plt
+import numpy as np
 from pymoo.indicators.igd import IGD
 
 dir = r'C:\Many_Objectives\EngProblem2'

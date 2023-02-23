@@ -1,10 +1,12 @@
 import math
 import random
+
 import numpy as np
 from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival
 from pymoo.core.mutation import Mutation
 from pymoo.core.population import pop_from_array_or_individual
 from pymoo.operators.repair.to_bound import set_to_bounds_if_outside_by_problem
+
 from MaAVOA_Code.MaAVOA import exploitation
 from MaAVOA_Code.MaAVOA import exploration
 

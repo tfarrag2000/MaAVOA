@@ -1,8 +1,7 @@
 import os
-
-import numpy as np
 import pickle
 
+import numpy as np
 from pymoo.indicators.igd import IGD
 
 dir = r'D:\My Research Results\Many_Objectives'

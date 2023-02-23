@@ -52,9 +52,7 @@
 #                 # plt.cla()
 #                 # plt.clf()
 import os
-from pymoo.algorithms.moo.rvea import RVEA
-from pymoo.algorithms.moo.rnsga3 import RNSGA3
-from pymoo.algorithms.moo.age import AGEMOEA
+
 import numpy as np
 from matplotlib import pyplot as plt
 

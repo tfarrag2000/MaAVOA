@@ -1,14 +1,11 @@
 import os
 import pickle
-from pymoo.algorithms.moo.moead import MOEAD
 
 import numpy as np
+from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.ctaea import CTAEA
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.unsga3 import UNSGA3
-from pymoo.algorithms.moo.rvea import RVEA
-from pymoo.algorithms.moo.rnsga3 import RNSGA3
-from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.factory import get_reference_directions, get_visualization, get_termination, get_sampling, get_crossover, \
     get_mutation
 from pymoo.indicators.gd import GD

@@ -1,6 +1,6 @@
+import copy
 import math
 import random
-import copy
 
 import numpy as np
 from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival

@@ -1,7 +1,3 @@
-import os
-
-import numpy as np
-
 dir = r'C:\Many_Objectives\EngProblem2'
 problem_name = 'EngProb2'
 import os

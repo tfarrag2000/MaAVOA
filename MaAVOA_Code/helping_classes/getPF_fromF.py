@@ -1,15 +1,11 @@
 import os
 
 import numpy as np
-from pymoo.algorithms.moo.ctaea import CTAEA
-from pymoo.algorithms.moo.nsga3 import NSGA3, ReferenceDirectionSurvival
-from pymoo.algorithms.moo.unsga3 import UNSGA3
-from pymoo.core.evaluator import Evaluator
-from pymoo.core.population import Population, pop_from_array_or_individual
-from pymoo.factory import get_termination, get_reference_directions
-from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
-
 from EngProblems.EngProb2 import EngProb2
+from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival
+from pymoo.core.evaluator import Evaluator
+from pymoo.core.population import pop_from_array_or_individual
+from pymoo.factory import get_reference_directions
 
 ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("ctaea", "CTAEA"),
               ("AGEMOEA", "AGEMOEA")]

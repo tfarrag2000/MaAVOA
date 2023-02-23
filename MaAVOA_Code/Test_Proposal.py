@@ -1,14 +1,12 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import os
 import pickle
 import time
+
+import numpy as np
 from pymoo.algorithms.moo.age import AGEMOEA
 from pymoo.algorithms.moo.ctaea import CTAEA
 from pymoo.algorithms.moo.moead import MOEAD
 from pymoo.algorithms.moo.nsga3 import NSGA3
-from pymoo.algorithms.moo.rnsga3 import RNSGA3
-from pymoo.algorithms.moo.rvea import RVEA
 from pymoo.algorithms.moo.unsga3 import UNSGA3
 from pymoo.factory import (
     get_problem,
@@ -17,7 +15,6 @@ from pymoo.factory import (
     get_visualization,
 )
 from pymoo.indicators.gd import GD
-from pymoo.indicators.hv import Hypervolume
 from pymoo.indicators.igd import IGD
 from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.optimize import minimize

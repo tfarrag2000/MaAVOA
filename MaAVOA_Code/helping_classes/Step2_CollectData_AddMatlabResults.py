@@ -1,7 +1,5 @@
 import os
 
-import numpy as np
-
 dir = r'C:\Many_Objectives\DTLZ_Problems'
 
 with open(os.path.join(dir, 'summary2.csv'), 'w') as filesummary:

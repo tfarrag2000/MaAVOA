@@ -1,6 +1,6 @@
+import copy
 import math
 import random
-import copy
 
 import numpy as np
 from pymoo.algorithms.moo.nsga3 import ReferenceDirectionSurvival
@@ -9,7 +9,6 @@ from pymoo.core.duplicate import DefaultDuplicateElimination, NoDuplicateElimina
 from pymoo.core.initialization import Initialization
 from pymoo.core.population import Population, pop_from_array_or_individual
 from pymoo.core.repair import NoRepair
-from pymoo.operators.crossover.sbx import SimulatedBinaryCrossover
 from pymoo.operators.mutation.pm import PolynomialMutation
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.operators.selection.tournament import TournamentSelection, compare

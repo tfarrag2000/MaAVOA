@@ -1,6 +1,5 @@
 import numpy as np
 from pymoo.core.problem import Problem
-from pymoo.operators.sampling.rnd import random_by_bounds
 
 
 class EngProb2(Problem):
