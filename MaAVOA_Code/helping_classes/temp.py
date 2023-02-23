@@ -1,3 +1,17 @@
+import os
+
+dir = 'D:\My Research Results\Many_Objectives'
+for probname in os.listdir(dir):
+    probdir = os.path.join(dir, probname)
+    if os.path.isdir(probdir):
+        for runname in os.listdir(probdir):
+            # print(probname,runname)
+            if runname == "run_2":
+                rundir = os.path.join(probdir, runname)
+                rundir2 = os.path.join(probdir, "run_12")
+                os.rename(rundir, rundir2)
+                print(rundir)
+
 # import os
 #
 # import numpy as np
@@ -91,16 +105,3 @@
 #                     plt.clf()
 #
 #
-import os
-
-dir = r'C:\Many_Objectives\DTLZ_Problems'
-for probname in os.listdir(dir):
-    probdir = os.path.join(dir, probname)
-    if os.path.isdir(probdir):
-        for runname in os.listdir(probdir):
-            # print(probname,runname)
-            if runname == "run_1":
-                rundir = os.path.join(probdir, runname)
-                rundir2 = os.path.join(probdir, "run_11")
-                os.rename(rundir, rundir2)
-                print(rundir)
