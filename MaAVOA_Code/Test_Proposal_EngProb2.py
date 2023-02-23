@@ -81,10 +81,10 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
     n_eval = res.algorithm.evaluator.n_eval
 
     print("done optimization")
-    PF=None
-    file=".\\PF\\PF_EngProb2_4.txt"
-    if os.path.exists(file) :
-        PF = np.genfromtxt(file,delimiter=',')
+    PF = None
+    file = ".\\PF\\PF_EngProb2_4.txt"
+    if os.path.exists(file):
+        PF = np.genfromtxt(file, delimiter=',')
 
     HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
 
@@ -129,12 +129,13 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3),("ctaea", CTAEA),("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("ctaea", CTAEA),
+                  ("AGEMOEA", AGEMOEA)]
     # termination = get_termination("time", "00:00:30")
     # termination = get_termination("n_eval", 100000)
 
     i = 0
-    for n_gen in [250, 500, 1000,2000,4000,5000,10000]:
+    for n_gen in [250, 500, 1000, 2000, 4000, 5000, 10000]:
         for alg, algorithmClass in ALGORITHMS:
             try:
                 termination = get_termination("n_gen", n_gen)
@@ -150,6 +151,6 @@ if __name__ == '__main__':
                     print("{}- {} -- run id:{} done".format(i, problemfullname, n_gen))
                     continue
 
-                setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=n_gen,saveResults=True)
+                setupFrameWork(algorithmClass, problem, 4, termination=termination, runID=n_gen, saveResults=True)
             except Exception as e:
                 print("{}- {} -- run id:{} Erroooor:{}".format(i, problemfullname, n_gen, e))

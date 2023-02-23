@@ -3,26 +3,27 @@ import os
 import numpy as np
 
 dir = r'C:\Many_Objectives\EngProblem2'
-problem_name='EngProb2'
+problem_name = 'EngProb2'
 import os
 
 with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
-    ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"),("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")]
+    ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("ctaea", "CTAEA"),
+                  ("AGEMOEA", "AGEMOEA")]
 
-    header="problem, Obj_no, AlgorithmName, n_gen, n_eval, pop_size, exec_time,igd, gd,igd_plus, HV,igd, gd,igd_plus, HV"
+    header = "problem, Obj_no, AlgorithmName, n_gen, n_eval, pop_size, exec_time,igd, gd,igd_plus, HV,igd, gd,igd_plus, HV"
     summaryheader = "runID,"
     for alg, Name in ALGORITHMS:
-        summaryheader=summaryheader+Name+"_"+header+","
-    summaryheader=summaryheader[:-1]+"\n"
+        summaryheader = summaryheader + Name + "_" + header + ","
+    summaryheader = summaryheader[:-1] + "\n"
     filesummary.write(summaryheader)
     for runsgroub in [[250, 500, 1000, 2000, 4000, 5000, 10000]]:
         for runID in runsgroub:
-            fullrundata="run_{},".format(runID)
+            fullrundata = "run_{},".format(runID)
             for alg, Name in ALGORITHMS:
-                problemfullname = '{}_obj4_{}'.format(problem_name,alg)
+                problemfullname = '{}_obj4_{}'.format(problem_name, alg)
                 probdir = os.path.join(dir, problemfullname)
                 rundir = os.path.join(probdir, "run_{}".format(runID))
-                resultfilepath= os.path.join(rundir, "final_result_run.csv")
+                resultfilepath = os.path.join(rundir, "final_result_run.csv")
                 # if runID != 11:
                 #     file =os.path.join(rundir, "result_object.pkl")
                 #     if os.path.exists(file):
@@ -38,15 +39,15 @@ with open(os.path.join(dir, 'summary.csv'), 'w') as filesummary:
                         if os.path.exists(m_filepath):
                             with open(m_filepath, 'r') as f2:
                                 f2.readline()
-                                m=f2.readline().strip('\n')
+                                m = f2.readline().strip('\n')
 
                         else:
-                            m="-1 ,-1 ,-1 ,-1"
+                            m = "-1 ,-1 ,-1 ,-1"
 
-                        fullrundata = fullrundata+"{} ,{},".format(data,m)
+                        fullrundata = fullrundata + "{} ,{},".format(data, m)
                 else:
                     print(resultfilepath)
-                    print ("Error")
+                    print("Error")
                     continue
 
             fullrundata = fullrundata[:-1] + "\n"

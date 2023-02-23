@@ -8,11 +8,9 @@ class EngProb2(Problem):
     def __init__(self):
         self.m = 4
         self.name = "EngProb2"
-        ff=(1 - (1 / np.power(10, 6)))
-        xl = np.concatenate((np.full( self.m, 0.5, dtype=float), np.full( self.m, ff, dtype=float)), axis=0)
-        xu = np.concatenate((np.full( self.m, 1.0, dtype=float), np.full( self.m, 10.0, dtype=float)), axis=0)
-
-
+        ff = (1 - (1 / np.power(10, 6)))
+        xl = np.concatenate((np.full(self.m, 0.5, dtype=float), np.full(self.m, ff, dtype=float)), axis=0)
+        xu = np.concatenate((np.full(self.m, 1.0, dtype=float), np.full(self.m, 10.0, dtype=float)), axis=0)
 
         super().__init__(n_var=2 * self.m, n_obj=4, xl=xl, xu=xu, n_constr=3)
 
@@ -56,11 +54,11 @@ class EngProb2(Problem):
         T = 1000  # given
         c = []
 
-        f1=1 #Tamer
+        f1 = 1  # Tamer
         for i in range(m):
             f1 = f1 * (1 - (np.power(1 - x[i], x[i + m])))
         # print("f1=", f1)
-        Fit.append(f1 * -1 )    ## -1 to convert max problem to min problem
+        Fit.append(f1 * -1)  ## -1 to convert max problem to min problem
         for i in range(m):
             f2 = f2 + (w[i] * np.power(v[i], 2) * np.power(x[i + m], 2))
         # print("f2=", f2)
@@ -91,6 +89,3 @@ class EngProb2(Problem):
         G.append(f4 - W)
 
         return Fit, G
-
-
-

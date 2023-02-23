@@ -8,8 +8,8 @@ class EngProb1(Problem):
     def __init__(self):
         self.m = 5
         self.name = "EngProb1"
-        xl = np.concatenate((np.zeros( self.m), np.full( self.m, 1, dtype=int)), axis=0)
-        xu = np.concatenate((np.ones( self.m), np.full( self.m, self.m, dtype=int)), axis=0)
+        xl = np.concatenate((np.zeros(self.m), np.full(self.m, 1, dtype=int)), axis=0)
+        xu = np.concatenate((np.ones(self.m), np.full(self.m, self.m, dtype=int)), axis=0)
         super().__init__(n_var=2 * self.m, n_obj=4, xl=xl, xu=xu, n_constr=3)
 
     def _evaluate(self, X, out, *args, **kwargs):
@@ -46,7 +46,7 @@ class EngProb1(Problem):
         alpha = [2.5, 1.45, 0.541, 0.541, 2.1]  # given
         beta = [1.5, 1.5, 1.5, 1.5, 1.5]  # given
         w = [3.5, 4, 4, 3, 4.5]  # given
-        V = 180 # given
+        V = 180  # given
         C = 175  # given
         W = 100  # given
 
@@ -59,7 +59,8 @@ class EngProb1(Problem):
         # print("f2=", f2)
         Fit.append(f2)
         for i in range(m):
-            f3 = f3 + (alpha[i] / 100000) * (np.power((-1000 / np.log(x[i])), beta[i])) * (x[i + m] + np.exp(0.25 * x[i + m]))
+            f3 = f3 + (alpha[i] / 100000) * (np.power((-1000 / np.log(x[i])), beta[i])) * (
+                        x[i + m] + np.exp(0.25 * x[i + m]))
         # print("f3=", f3)
         Fit.append(f3)
 
@@ -80,6 +81,3 @@ class EngProb1(Problem):
         G.append(f4 - W)
 
         return Fit, G
-
-
-

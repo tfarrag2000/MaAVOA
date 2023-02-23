@@ -14,7 +14,7 @@ for probname in os.listdir(dir):
         for runname in os.listdir(probdir):
             if runname != "run_1000":
                 continue
-            print(probname,runname)
+            print(probname, runname)
 
             rundir = os.path.join(probdir, runname)
             dir_pkl = os.path.join(rundir, 'result_object.pkl')
@@ -25,20 +25,19 @@ for probname in os.listdir(dir):
                 print("{}_{}  start".format(probname, runname))
 
                 file = open(dir_pkl, 'rb')
-                res=pickle.load(file)
+                res = pickle.load(file)
                 file.close()
 
                 PF_filepath = os.path.join(rundir, "PF_new.csv")
                 PF = np.genfromtxt(PF_filepath, delimiter=',')
 
-
                 metric = IGD(PF, zero_to_one=True)
-                F_list= [h.opt.get("F") for h in res.history]
+                F_list = [h.opt.get("F") for h in res.history]
                 n_evals = np.array([e.evaluator.n_eval for e in res.history])
-                igd_list = np.array([metric.do(_F) for _F in     F_list])
+                igd_list = np.array([metric.do(_F) for _F in F_list])
                 np.savetxt(os.path.join(rundir, "history_igd_list.csv"), igd_list, delimiter=",")
                 np.savetxt(os.path.join(rundir, "history_n_evals.csv"), n_evals, delimiter=",")
-                n_gen=range(1,len(igd_list)+1)
+                n_gen = range(1, len(igd_list) + 1)
 
                 # plt.plot(n_gen, igd_list, color='black', lw=0.7, label="Avg. CV of Pop")
                 # # plt.scatter(runs, igd_list, facecolor="none", edgecolor='black', marker="p")

@@ -24,12 +24,11 @@ with open(os.path.join(dir, 'summary2.csv'), 'w') as filesummary:
 
                 if os.path.exists(F_filepath):
                     str = open(F_filepath, 'r').read()
-                    str=str.replace(",\n", ",")
+                    str = str.replace(",\n", ",")
                     str = str.replace("[", "")
                     str = str.replace("]", "")
                     str = str.replace(" ", "")
                     open(F2_filepath, 'w').write(str)
-
 
                 if os.path.exists(filepath):
                     with open(filepath, 'r') as file:
@@ -38,10 +37,10 @@ with open(os.path.join(dir, 'summary2.csv'), 'w') as filesummary:
                         if os.path.exists(m_filepath):
                             with open(m_filepath, 'r') as f2:
                                 f2.readline()
-                                m=f2.readline().strip('\n')
+                                m = f2.readline().strip('\n')
                         else:
-                            m="-1 ,-1 ,-1 ,-1"
+                            m = "-1 ,-1 ,-1 ,-1"
 
-                        data = "{} ,{} ,{} ,{}\n".format(probname, runname, data,m)
+                        data = "{} ,{} ,{} ,{}\n".format(probname, runname, data, m)
 
                         filesummary.write(data)

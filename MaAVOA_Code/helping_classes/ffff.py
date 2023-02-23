@@ -53,9 +53,6 @@
 #                 # plt.clf()
 
 
-
-
-
 # import os
 #
 # import numpy as np
@@ -96,7 +93,7 @@
 #
 import os
 
-dir='D:\My Research Results\Many_Objectives'
+dir = 'D:\My Research Results\Many_Objectives'
 for probname in os.listdir(dir):
     probdir = os.path.join(dir, probname)
     if os.path.isdir(probdir):
@@ -105,5 +102,5 @@ for probname in os.listdir(dir):
             if runname == "run_2":
                 rundir = os.path.join(probdir, runname)
                 rundir2 = os.path.join(probdir, "run_12")
-                os.rename(rundir,rundir2)
+                os.rename(rundir, rundir2)
                 print(rundir)

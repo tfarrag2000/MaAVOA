@@ -155,13 +155,12 @@ class MaAVOA(Algorithm):
         ################### Africian exploration & exploitation ###################
         variables_no = self.problem.n_var
         X_african_all = pop_african.get("X")
-        if self.MaAVOA_p1!=1:
+        if self.MaAVOA_p1 != 1:
             indices = np.random.choice(X_african_all.shape[0], round(X_african_all.shape[0] * self.MaAVOA_p1),
                                        replace=False)
             X_african = X_african_all[indices]
         else:
             X_african = X_african_all
-
 
         p1 = 0.6
         p2 = 0.4
@@ -199,7 +198,8 @@ class MaAVOA(Algorithm):
         mutation = PolynomialMutation(eta=20, prob=.2)
         off_mutated = mutation.do(self.problem, off_african)
 
-        X_new = np.unique(np.concatenate((X_african_new.astype("float"), off_mutated.get("X").astype("float")), axis=0), axis=0)
+        X_new = np.unique(np.concatenate((X_african_new.astype("float"), off_mutated.get("X").astype("float")), axis=0),
+                          axis=0)
 
         off_new = pop_from_array_or_individual(X_new)
         # off_new =Population.merge(off_mutated,off_mutated)
@@ -253,7 +253,7 @@ class MaAVOA(Algorithm):
         parents = selection.do(ARC_unsorted, n_select, crossover.n_parents)
         ARC_off = crossover.do(self.problem, ARC_unsorted, parents)
         ARC_off = mutation.do(self.problem, ARC_off)
-        ev=copy.deepcopy( self.evaluator)
+        ev = copy.deepcopy(self.evaluator)
         ev.eval(self.problem, ARC_off)
 
         ARC_unsorted = Population.merge(ARC_unsorted, ARC_off)

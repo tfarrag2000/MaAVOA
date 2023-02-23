@@ -58,8 +58,9 @@ from pymoo.algorithms.moo.age import AGEMOEA
 import numpy as np
 from matplotlib import pyplot as plt
 
-ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")]
-runID="run_11"
+ALGORITHMS = [("MaAVOA_70_90", "MaAVOA"), ("nsga3", "NSGA3"), ("unsga3", "UNSGA3"), ("moead", "MOEAD"),
+              ("ctaea", "CTAEA"), ("AGEMOEA", "AGEMOEA")]
+runID = "run_11"
 
 for n_obj in [3, 5, 8, 10, 15]:
     for pID in [1, 2, 3, 4, 5, 6, 7]:
@@ -68,7 +69,7 @@ for n_obj in [3, 5, 8, 10, 15]:
             maindir = r'C:\Many_Objectives\DTLZ_Problems'
             problemfullname = '{}_obj{}_{}'.format(problem_name, n_obj, alg)
 
-            rundir = os.path.join(maindir, '{}\\{}'.format(problemfullname,runID))
+            rundir = os.path.join(maindir, '{}\\{}'.format(problemfullname, runID))
 
             if not os.path.exists(os.path.join(rundir, "history_igd_list.csv")):
                 continue
@@ -86,8 +87,8 @@ for n_obj in [3, 5, 8, 10, 15]:
             plt.yscale("log")
         plt.legend()
         problemfullname = '{}_obj{}'.format(problem_name, n_obj)
-        path= os.path.join(maindir, "{}_{}_iter_conv.png".format(problemfullname,runID))
-        plt.savefig(path , dpi=1200)
+        path = os.path.join(maindir, "{}_{}_iter_conv.png".format(problemfullname, runID))
+        plt.savefig(path, dpi=1200)
         print("file saved : {}".format(path))
         plt.cla()
         plt.clf()

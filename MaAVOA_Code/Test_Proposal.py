@@ -25,7 +25,8 @@ from pymoo.optimize import minimize
 from MaAVOA_Code.MaAVOA import MaAVOA
 
 
-def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True, maindir=None):
+def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True,
+                   maindir=None):
     problemfullname = '{}_obj{}_{}'.format(problem.Name, n_obj, problem.AlgorithmName)
     print(problemfullname + " run_{}".format(runID))
 
@@ -45,7 +46,6 @@ def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
     if pop_size == None:
         pop_size = len(ref_dirs)
-
 
     # np.savetxt('ref_dirs_{}.txt'.format(Objective_no,len(ref_dirs)), ref_dirs, delimiter=',')
     # np.savetxt('PF_{}_{}.txt'.format(problem.Name,n_obj), PF, delimiter=',')
@@ -83,13 +83,12 @@ def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=No
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
         HV = 0  # HV = Hypervolume(ref_point=np.ones(n_obj)).do(F)
     else:
-        pf_dir=os.path.join(".\PF\PlatEmo", "PF_{}_{}.txt".format(problem.Name,n_obj))
-        PF=np.genfromtxt(pf_dir, delimiter=',')
+        pf_dir = os.path.join(".\PF\PlatEmo", "PF_{}_{}.txt".format(problem.Name, n_obj))
+        PF = np.genfromtxt(pf_dir, delimiter=',')
         igd = IGD(PF, zero_to_one=True).do(F)
         gd = GD(PF, zero_to_one=True).do(F)
         igdplus = IGDPlus(PF, zero_to_one=True).do(F)
         HV = 0
-
 
     if saveResults:
 
@@ -102,10 +101,11 @@ def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=No
             np.savetxt(os.path.join(dir, "PF_new.csv"), PF, delimiter=",")
             if n_obj <= 5:
                 get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
-                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)) , dpi=1200)
+                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)), dpi=1200)
 
-            v= get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey",alpha=0.3)
-            v.add(F,label="Result",color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)) , dpi=1200)
+            v = get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey", alpha=0.3)
+            v.add(F, label="Result", color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)),
+                                                        dpi=1200)
 
         with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
             pickle.dump(res, file)
@@ -137,15 +137,15 @@ def setupFramework(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 if __name__ == '__main__':
     ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
-                  ("ctaea", CTAEA),("AGEMOEA", AGEMOEA)]
+                  ("ctaea", CTAEA), ("AGEMOEA", AGEMOEA)]
     ALGORITHMS = [("AGEMOEA", AGEMOEA)]
     # termination = get_termination("n_eval", 100000) # run 21
-    termination = get_termination("n_gen", 500) # run 11
+    termination = get_termination("n_gen", 500)  # run 11
     # termination = get_termination("time", "00:00:30")  # run 31
-    i=0
+    i = 0
     for runId in [111]:
-        for n_obj in [3,5,8,10,15]:
-            for pID in [1,2,3,4,5,6,7]:  # dtlz
+        for n_obj in [3, 5, 8, 10, 15]:
+            for pID in [1, 2, 3, 4, 5, 6, 7]:  # dtlz
                 for alg, algorithmClass in ALGORITHMS:
                     k = 10
                     if pID == 1:
@@ -165,7 +165,7 @@ if __name__ == '__main__':
                     dir = os.path.join(maindir, '{}\\run_{}\\final_result_run.csv'.format(problemfullname, runId))
                     i = i + 1
                     if os.path.exists(dir):
-                        print("{}- {}  done".format(i,problemfullname))
+                        print("{}- {}  done".format(i, problemfullname))
                         continue
                     setupFramework(algorithmClass, problem, n_obj, termination=termination, runID=runId,
                                    saveResults=True, maindir=maindir)
