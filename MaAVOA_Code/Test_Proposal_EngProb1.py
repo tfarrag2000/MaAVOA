@@ -63,7 +63,6 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
                                crossover=crossover,
                                mutation=mutation,
                                eliminate_duplicates=True)
-    # algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
 
     res = minimize(problem,
                    algorithm,
@@ -103,10 +102,10 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
             np.savetxt(os.path.join(dir, "PF_new.csv"), PF, delimiter=",")
             if n_obj <= 5:
                 get_visualization("scatter", angle=(45, 45)).add(PF, label="Pareto-front").add(F, label="Result").save(
-                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)))
+                    os.path.join(dir, "{}_3D_Scatter.png".format(problemfullname)) , dpi=1200)
 
             v = get_visualization("pcp", color="grey", alpha=0.5).add(PF, label="Pareto-front", color="grey", alpha=0.3)
-            v.add(F, label="Result", color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)))
+            v.add(F, label="Result", color="blue").save(os.path.join(dir, "{}_PCP.png".format(problemfullname)) , dpi=1200)
 
         with open(os.path.join(dir, 'result_object.pkl'), 'wb') as file:
             pickle.dump(res, file)
@@ -125,11 +124,10 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix) ,("nsga3", NSGA3), ("unsga3", UNSGA3),  #, ("RNSGA3", RNSGA3) ("moead", MOEAD),
-                  ("ctaea", CTAEA) ,("RVEA", RVEA), ("RNSGA3", RNSGA3), ("AGEMOEA", AGEMOEA)]
-    ALGORITHMS = [("RVEA", RVEA), ("AGEMOEA", AGEMOEA)]
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),("ctaea", CTAEA), ("AGEMOEA", AGEMOEA)]
 
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),("ctaea", CTAEA), ("AGEMOEA", AGEMOEA)]
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3), ("moead", MOEAD),
+                  ("ctaea", CTAEA),("AGEMOEA", AGEMOEA)]
     # termination = get_termination("time", "00:00:30")
     # termination = get_termination("n_eval", 100000)
 

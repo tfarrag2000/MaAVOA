@@ -19,7 +19,7 @@ from pymoo.operators.mixed_variable_operator import MixedVariableSampling, Mixed
 from pymoo.optimize import minimize
 
 from EngProblems.EngProb2 import EngProb2
-from MaAVOA_Code.MaAVOA_Mix import MaAVOA_Mix
+from MaAVOA_Code.MaAVOA import MaAVOA
 
 
 def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=None, runID=1, saveResults=True):
@@ -65,7 +65,6 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
                                crossover=crossover,
                                mutation=mutation,
                                eliminate_duplicates=True)
-    # algorithm.setup(problem, termination, seed=1, save_history=False, verbose=False)
 
     res = minimize(problem,
                    algorithm,
@@ -130,8 +129,7 @@ def setupFrameWork(algorithmClass, problem, n_obj, termination=None, pop_size=No
 
 
 if __name__ == '__main__':
-    ALGORITHMS = [("MaAVOA_70_90", MaAVOA_Mix), ("nsga3", NSGA3), ("unsga3", UNSGA3),("ctaea", CTAEA), ("AGEMOEA", AGEMOEA)]
-
+    ALGORITHMS = [("MaAVOA_70_90", MaAVOA), ("nsga3", NSGA3), ("unsga3", UNSGA3),("ctaea", CTAEA),("AGEMOEA", AGEMOEA)]
     # termination = get_termination("time", "00:00:30")
     # termination = get_termination("n_eval", 100000)
 

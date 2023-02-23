@@ -87,7 +87,7 @@ for n_obj in [3, 5, 8, 10, 15]:
         plt.legend()
         problemfullname = '{}_obj{}'.format(problem_name, n_obj)
         path= os.path.join(maindir, "{}_{}_iter_conv.png".format(problemfullname,runID))
-        plt.savefig(path)
+        plt.savefig(path , dpi=1200)
         print("file saved : {}".format(path))
         plt.cla()
         plt.clf()
